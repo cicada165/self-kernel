@@ -25,6 +25,11 @@ const TRANSITIONS = {
     [STATES.DECISION]: [STATES.REFINING]    // Needs more work
 };
 
+export function validateTransition(currentStage, newStage) {
+    if (currentStage === newStage) return true;
+    return TRANSITIONS[currentStage]?.includes(newStage) || false;
+}
+
 export async function createIntent(data) {
     const intent = await storage.create('intents', {
         ...data,
@@ -43,7 +48,7 @@ export async function transitionState(intentId, newState, reason) {
     const intent = await storage.getById('intents', intentId);
     if (!intent) throw new Error('Intent not found');
 
-    if (!TRANSITIONS[intent.stage]?.includes(newState) && intent.stage !== newState) {
+    if (!validateTransition(intent.stage, newState)) {
         throw new Error(`Invalid transition from ${intent.stage} to ${newState}`);
     }
 

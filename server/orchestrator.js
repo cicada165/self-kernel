@@ -12,6 +12,22 @@ import * as storage from './storage.js';
 // The "Outbox" of tasks pushed to execution
 const executionQueue = [];
 
+export function buildExecutionPayload(intent, contextPersons = []) {
+    return {
+        task_id: uuidv4(),
+        intent_source_id: intent.id,
+        directive: intent.title,
+        parameters: intent.description,
+        priority: intent.priority || 'medium',
+        context: {
+            involved_entities: contextPersons.map(p => ({ role: p.role, name: p.name })),
+            tags: intent.tags || [],
+            kernel_timestamp: new Date().toISOString()
+        },
+        status: 'dispatched'
+    };
+}
+
 /**
  * Triggered by the FSM when an Intent reaches DECISION state
  */
@@ -31,19 +47,7 @@ export async function enqueueForExecution(intent) {
         const contextPersons = allPersons.filter(p => relatedPersonIds.includes(p.id));
 
         // 2. Build the Payload for "Downstream Hands"
-        const executionPayload = {
-            task_id: uuidv4(),
-            intent_source_id: intent.id,
-            directive: intent.title,
-            parameters: intent.description,
-            priority: intent.priority || 'medium',
-            context: {
-                involved_entities: contextPersons.map(p => ({ role: p.role, name: p.name })),
-                tags: intent.tags || [],
-                kernel_timestamp: new Date().toISOString()
-            },
-            status: 'dispatched'
-        };
+        const executionPayload = buildExecutionPayload(intent, contextPersons);
 
         executionQueue.push(executionPayload);
 
