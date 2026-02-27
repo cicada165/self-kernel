@@ -1,0 +1,16 @@
+{
+  "id": "cs-weekly-1",
+  "week": 1,
+  "startDate": "2025-01-15T00:00:00.000Z",
+  "endDate": "2025-01-22T00:00:00.000Z",
+  "dominantStage": "exploration",
+  "summary": "Questioning current career path. Exploring vague ideas about personal AI. High uncertainty, lots of branching questions.",
+  "intentActivity": {
+    "i-career-change": "exploration",
+    "i-personal-growth": "exploration"
+  },
+  "energyLevel": 0.6,
+  "clarityLevel": 0.3,
+  "createdAt": "2026-02-27T06:18:10.374Z",
+  "updatedAt": "2026-02-27T06:18:10.374Z"
+}

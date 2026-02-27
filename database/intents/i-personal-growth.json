@@ -1,0 +1,32 @@
+{
+  "id": "i-personal-growth",
+  "title": "Develop Founder Mindset",
+  "description": "Transition from big-company PM thinking to founder thinking. Embrace uncertainty, move faster, focus on first principles.",
+  "stage": "REFINING",
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-01-17T00:00:00.000Z",
+      "note": "Realizing I need to change how I think"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2025-01-25T00:00:00.000Z",
+      "note": "Developing daily practices"
+    }
+  ],
+  "tags": [
+    "personal",
+    "mindset",
+    "growth"
+  ],
+  "parentId": "i-career-change",
+  "linkedPersons": [
+    "p-self-001",
+    "p-mentor-sarah"
+  ],
+  "priority": "medium",
+  "active": true,
+  "createdAt": "2025-01-17T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.369Z"
+}

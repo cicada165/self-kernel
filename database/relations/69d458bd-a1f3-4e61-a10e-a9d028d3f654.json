@@ -1,0 +1,12 @@
+{
+  "id": "69d458bd-a1f3-4e61-a10e-a9d028d3f654",
+  "sourceType": "person",
+  "sourceId": "p-self-001",
+  "targetType": "person",
+  "targetId": "p-mentor-sarah",
+  "label": "mentored-by",
+  "strength": 0.85,
+  "context": "Sarah serves as informal advisor on startup strategy and AI market",
+  "createdAt": "2026-02-27T06:18:10.371Z",
+  "updatedAt": "2026-02-27T06:18:10.371Z"
+}

@@ -1,0 +1,12 @@
+{
+  "id": "0625a31d-1c4f-4b79-b278-3854f36f15ff",
+  "sourceType": "thinking-chain",
+  "sourceId": "tc-pi-concept",
+  "targetType": "intent",
+  "targetId": "i-product-vision",
+  "label": "defines",
+  "strength": 0.9,
+  "context": "The theoretical framework that underpins the product architecture.",
+  "createdAt": "2026-02-27T06:18:10.373Z",
+  "updatedAt": "2026-02-27T06:18:10.373Z"
+}

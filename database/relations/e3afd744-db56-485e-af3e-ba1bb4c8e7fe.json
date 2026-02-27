@@ -1,0 +1,12 @@
+{
+  "id": "e3afd744-db56-485e-af3e-ba1bb4c8e7fe",
+  "sourceType": "thinking-chain",
+  "sourceId": "tc-should-i-leave",
+  "targetType": "intent",
+  "targetId": "i-career-change",
+  "label": "originated",
+  "strength": 1,
+  "context": "This thinking chain is the origin of the career change intent.",
+  "createdAt": "2026-02-27T06:18:10.373Z",
+  "updatedAt": "2026-02-27T06:18:10.373Z"
+}

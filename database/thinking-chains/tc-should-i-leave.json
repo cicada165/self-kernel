@@ -1,0 +1,57 @@
+{
+  "id": "tc-should-i-leave",
+  "title": "Should I Leave Big Tech?",
+  "description": "The foundational question that started everything.",
+  "nodes": [
+    {
+      "id": "n1",
+      "content": "I keep thinking about what I actually want to build. The PM role feels increasingly constrained.",
+      "timestamp": "2025-01-15T00:00:00.000Z",
+      "type": "question",
+      "source": "self-reflection"
+    },
+    {
+      "id": "n2",
+      "content": "Asked Claude about common founder motivations. The \"pull vs push\" framework resonated — I have a pull toward building, not just a push away from corporate.",
+      "timestamp": "2025-01-17T00:00:00.000Z",
+      "type": "insight",
+      "source": "llm-conversation"
+    },
+    {
+      "id": "n3",
+      "content": "David said something important: \"You've been building other people's visions for 8 years. When do you build yours?\"",
+      "timestamp": "2025-01-20T00:00:00.000Z",
+      "type": "external-input",
+      "source": "conversation",
+      "linkedPerson": "p-colleague-david"
+    },
+    {
+      "id": "n4",
+      "content": "Financial analysis: I have 18 months of runway if I'm frugal. That's enough to build and raise.",
+      "timestamp": "2025-01-23T00:00:00.000Z",
+      "type": "analysis",
+      "source": "self-analysis"
+    },
+    {
+      "id": "n5",
+      "content": "Sarah's advice: \"The window for personal AI infrastructure is 18-24 months. After that, the big players will lock it down.\"",
+      "timestamp": "2025-01-27T00:00:00.000Z",
+      "type": "external-input",
+      "source": "conversation",
+      "linkedPerson": "p-mentor-sarah"
+    },
+    {
+      "id": "n6",
+      "content": "DECISION: I'm going to do this. Targeting March 1st as my last day.",
+      "timestamp": "2025-02-04T00:00:00.000Z",
+      "type": "decision",
+      "source": "self-reflection"
+    }
+  ],
+  "linkedIntents": [
+    "i-career-change",
+    "i-personal-growth"
+  ],
+  "createdAt": "2025-01-15T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.370Z"
+}

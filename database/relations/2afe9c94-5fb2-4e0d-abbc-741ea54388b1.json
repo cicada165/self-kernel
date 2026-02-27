@@ -1,0 +1,12 @@
+{
+  "id": "2afe9c94-5fb2-4e0d-abbc-741ea54388b1",
+  "sourceType": "person",
+  "sourceId": "p-self-001",
+  "targetType": "person",
+  "targetId": "p-investor-ming",
+  "label": "pitching-to",
+  "strength": 0.6,
+  "context": "Ming is interested but needs to see a prototype. Introduced via Sarah.",
+  "createdAt": "2026-02-27T06:18:10.371Z",
+  "updatedAt": "2026-02-27T06:18:10.371Z"
+}

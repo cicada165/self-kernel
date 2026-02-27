@@ -1,0 +1,43 @@
+{
+  "id": "i-ai-startup",
+  "title": "Build Personal Intelligence Platform",
+  "description": "Create a local-first, white-box personal intelligence core that serves as a user's MCP server — managing intents, relationships, and cognitive state.",
+  "stage": "DECISION",
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-01-23T00:00:00.000Z",
+      "note": "Initial concept brainstorm"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2025-01-29T00:00:00.000Z",
+      "note": "Architecture taking shape"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2025-02-06T00:00:00.000Z",
+      "note": "Committed to this specific vision"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2025-02-10T00:00:00.000Z",
+      "note": "Prototype development started"
+    }
+  ],
+  "tags": [
+    "product",
+    "pi",
+    "mcp",
+    "prototype"
+  ],
+  "parentId": "i-career-change",
+  "linkedPersons": [
+    "p-self-001",
+    "p-cofounder-alex"
+  ],
+  "priority": "critical",
+  "active": true,
+  "createdAt": "2025-01-23T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.369Z"
+}

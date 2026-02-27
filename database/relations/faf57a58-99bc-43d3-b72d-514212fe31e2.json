@@ -1,0 +1,12 @@
+{
+  "id": "faf57a58-99bc-43d3-b72d-514212fe31e2",
+  "sourceType": "intent",
+  "sourceId": "i-ai-startup",
+  "targetType": "intent",
+  "targetId": "i-product-vision",
+  "label": "requires",
+  "strength": 0.95,
+  "context": "Product vision is the core deliverable for the startup.",
+  "createdAt": "2026-02-27T06:18:10.372Z",
+  "updatedAt": "2026-02-27T06:18:10.372Z"
+}

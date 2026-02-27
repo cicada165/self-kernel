@@ -1,0 +1,12 @@
+{
+  "id": "4eb51f52-f03b-426a-9d5f-5927e7965cb2",
+  "sourceType": "person",
+  "sourceId": "p-mentor-sarah",
+  "targetType": "person",
+  "targetId": "p-investor-ming",
+  "label": "introduced",
+  "strength": 0.7,
+  "context": "Sarah connected me with Ming from her investor network.",
+  "createdAt": "2026-02-27T06:18:10.371Z",
+  "updatedAt": "2026-02-27T06:18:10.371Z"
+}

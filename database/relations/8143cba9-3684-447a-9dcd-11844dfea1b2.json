@@ -1,0 +1,12 @@
+{
+  "id": "8143cba9-3684-447a-9dcd-11844dfea1b2",
+  "sourceType": "person",
+  "sourceId": "p-cofounder-alex",
+  "targetType": "intent",
+  "targetId": "i-product-vision",
+  "label": "co-creating",
+  "strength": 0.95,
+  "context": "Alex and I are jointly designing the architecture.",
+  "createdAt": "2026-02-27T06:18:10.372Z",
+  "updatedAt": "2026-02-27T06:18:10.372Z"
+}

@@ -1,0 +1,9 @@
+{
+  "id": "137e0f5e-6c33-4f3e-86ca-c65270e5a34b",
+  "agentId": "openclaw-executor",
+  "type": "PROACTIVE_DISPATCH",
+  "intentId": "i-team-building",
+  "details": "Kernel dynamically routed intent to executor: Build Founding Team",
+  "createdAt": "2026-02-27T06:30:15.953Z",
+  "updatedAt": "2026-02-27T06:30:15.953Z"
+}

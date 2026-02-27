@@ -1,0 +1,49 @@
+{
+  "id": "tc-pi-concept",
+  "title": "Personal Intelligence as OS Core Process",
+  "description": "Developing the theoretical framework for PI as the personal core process in the AI OS.",
+  "nodes": [
+    {
+      "id": "n1",
+      "content": "Historical pattern: PC OS → software ecosystem. Mobile OS → app ecosystem. AI OS → ??? What's the personal layer?",
+      "timestamp": "2025-01-25T00:00:00.000Z",
+      "type": "question",
+      "source": "self-reflection"
+    },
+    {
+      "id": "n2",
+      "content": "AI glasses aren't about the hardware. They're about continuous sensing + persistent context. This REQUIRES a long-lived personal intelligence core.",
+      "timestamp": "2025-01-27T00:00:00.000Z",
+      "type": "insight",
+      "source": "llm-conversation"
+    },
+    {
+      "id": "n3",
+      "content": "The key distinction: LLM memory is \"black box sedimentation.\" PI data must be white-box, user-governed, structured around Intent/Person/Relation.",
+      "timestamp": "2025-01-30T00:00:00.000Z",
+      "type": "insight",
+      "source": "self-reflection"
+    },
+    {
+      "id": "n4",
+      "content": "Ming asked the right question: \"Why would someone choose this over just having a better ChatGPT memory?\" Answer: because ChatGPT memory is a feature. PI is infrastructure.",
+      "timestamp": "2025-02-04T00:00:00.000Z",
+      "type": "external-input",
+      "source": "conversation",
+      "linkedPerson": "p-investor-ming"
+    },
+    {
+      "id": "n5",
+      "content": "Framework crystallized: PI is the \"personal core process\" in the AI OS. One per person. Non-shareable. Long-lived. Model-agnostic. The anchor between humans and the entire AI ecosystem.",
+      "timestamp": "2025-02-06T00:00:00.000Z",
+      "type": "synthesis",
+      "source": "self-reflection"
+    }
+  ],
+  "linkedIntents": [
+    "i-product-vision",
+    "i-ai-startup"
+  ],
+  "createdAt": "2025-01-25T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.370Z"
+}

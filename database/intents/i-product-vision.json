@@ -1,0 +1,37 @@
+{
+  "id": "i-product-vision",
+  "title": "Define Product Vision & Architecture",
+  "description": "Establish the core architecture: three atomic objects (Person, Intent, Relation), local-first storage, MCP server interface, and progressive data collection via browser extension → chat plugin → input method.",
+  "stage": "DECISION",
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-01-23T00:00:00.000Z",
+      "note": "Exploring different approaches"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2025-01-30T00:00:00.000Z",
+      "note": "Converging on PI concept"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2025-02-06T00:00:00.000Z",
+      "note": "Architecture finalized"
+    }
+  ],
+  "tags": [
+    "architecture",
+    "product",
+    "vision"
+  ],
+  "parentId": "i-ai-startup",
+  "linkedPersons": [
+    "p-self-001",
+    "p-cofounder-alex"
+  ],
+  "priority": "high",
+  "active": true,
+  "createdAt": "2025-01-23T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.369Z"
+}

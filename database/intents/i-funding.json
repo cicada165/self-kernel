@@ -1,0 +1,33 @@
+{
+  "id": "i-funding",
+  "title": "Secure Seed Funding ($1-2M)",
+  "description": "Raise a seed round to support 12-18 months of development. Focus on investors who understand AI infrastructure and personal sovereignty.",
+  "stage": "REFINING",
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-01-30T00:00:00.000Z",
+      "note": "Started thinking about funding"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2025-02-06T00:00:00.000Z",
+      "note": "Building investor pipeline"
+    }
+  ],
+  "tags": [
+    "funding",
+    "seed",
+    "investors"
+  ],
+  "parentId": "i-career-change",
+  "linkedPersons": [
+    "p-self-001",
+    "p-investor-ming",
+    "p-mentor-sarah"
+  ],
+  "priority": "high",
+  "active": true,
+  "createdAt": "2025-01-30T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.369Z"
+}

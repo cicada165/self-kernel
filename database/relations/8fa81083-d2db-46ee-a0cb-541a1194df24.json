@@ -1,0 +1,12 @@
+{
+  "id": "8fa81083-d2db-46ee-a0cb-541a1194df24",
+  "sourceType": "thinking-chain",
+  "sourceId": "tc-what-to-build",
+  "targetType": "intent",
+  "targetId": "i-ai-startup",
+  "label": "crystallized",
+  "strength": 0.95,
+  "context": "This thinking chain led to the Self Kernel concept.",
+  "createdAt": "2026-02-27T06:18:10.373Z",
+  "updatedAt": "2026-02-27T06:18:10.373Z"
+}

@@ -1,0 +1,35 @@
+{
+  "id": "tc-go-to-market",
+  "title": "Go-to-Market Strategy",
+  "description": "How to bring Self Kernel to market — starting with developers.",
+  "nodes": [
+    {
+      "id": "n1",
+      "content": "Who needs this first? Developers already use multiple AI tools daily. They feel the pain of fragmented context most acutely.",
+      "timestamp": "2025-02-02T00:00:00.000Z",
+      "type": "question",
+      "source": "self-reflection"
+    },
+    {
+      "id": "n2",
+      "content": "Sarah's GTM advice: \"Don't try to be everything. Start as a browser extension that captures thinking patterns from LLM usage. Then expand.\"",
+      "timestamp": "2025-02-06T00:00:00.000Z",
+      "type": "external-input",
+      "source": "conversation",
+      "linkedPerson": "p-mentor-sarah"
+    },
+    {
+      "id": "n3",
+      "content": "Prototype strategy: Build the core kernel + dashboard first. Ship as open-source. Let developers inspect and trust the data layer. Then build collection plugins.",
+      "timestamp": "2025-02-09T00:00:00.000Z",
+      "type": "analysis",
+      "source": "self-analysis"
+    }
+  ],
+  "linkedIntents": [
+    "i-ai-startup",
+    "i-funding"
+  ],
+  "createdAt": "2025-02-02T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.370Z"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "i-team-building",
+  "title": "Build Founding Team",
+  "description": "Recruit 2-3 founding team members: systems engineer (Alex?), ML engineer, and designer.",
+  "stage": "DECISION",
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-02-02T00:00:00.000Z",
+      "note": "Started thinking about team composition"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2026-02-27T06:30:15.938Z",
+      "note": "Moved to REFINING"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2026-02-27T06:30:15.949Z",
+      "note": "Moved to DECISION"
+    }
+  ],
+  "tags": [
+    "team",
+    "hiring",
+    "cofounders"
+  ],
+  "parentId": "i-career-change",
+  "linkedPersons": [
+    "p-self-001",
+    "p-cofounder-alex"
+  ],
+  "priority": "medium",
+  "active": true,
+  "createdAt": "2025-02-02T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:30:15.952Z",
+  "confidence": 1
+}

@@ -1,0 +1,12 @@
+{
+  "id": "f8403a0d-5485-42a4-9caa-cbdcdebd5fe1",
+  "sourceType": "intent",
+  "sourceId": "i-market-research",
+  "targetType": "intent",
+  "targetId": "i-product-vision",
+  "label": "informs",
+  "strength": 0.75,
+  "context": "Market research directly shapes product positioning.",
+  "createdAt": "2026-02-27T06:18:10.373Z",
+  "updatedAt": "2026-02-27T06:18:10.373Z"
+}

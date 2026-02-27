@@ -1,0 +1,12 @@
+{
+  "id": "43850278-02f3-43de-a98f-f65c407f8c53",
+  "sourceType": "person",
+  "sourceId": "p-self-001",
+  "targetType": "person",
+  "targetId": "p-cofounder-alex",
+  "label": "building-with",
+  "strength": 0.92,
+  "context": "Alex is the strongest co-founder candidate. Aligned on vision and complementary skills.",
+  "createdAt": "2026-02-27T06:18:10.371Z",
+  "updatedAt": "2026-02-27T06:18:10.371Z"
+}

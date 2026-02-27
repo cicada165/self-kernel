@@ -1,0 +1,12 @@
+{
+  "id": "c012b23e-633a-4bf6-9d65-53aa7988995d",
+  "sourceType": "intent",
+  "sourceId": "i-ai-startup",
+  "targetType": "intent",
+  "targetId": "i-funding",
+  "label": "enables",
+  "strength": 0.8,
+  "context": "Funding is needed to build the full product.",
+  "createdAt": "2026-02-27T06:18:10.372Z",
+  "updatedAt": "2026-02-27T06:18:10.372Z"
+}

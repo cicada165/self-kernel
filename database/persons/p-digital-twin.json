@@ -1,0 +1,16 @@
+{
+  "id": "p-digital-twin",
+  "name": "My Digital Twin",
+  "type": "digital-twin",
+  "role": "Autonomous PI agent for networking and research",
+  "notes": "Configured to represent my professional interests in agent networks. Authorized to share: public work history, stated interests, and open collaboration requests. NOT authorized to share: financial details, private relationships, unfinished ideas.",
+  "tags": [
+    "digital-twin",
+    "agent",
+    "proxy"
+  ],
+  "interactions": 156,
+  "lastSeen": "2025-02-13T00:00:00.000Z",
+  "createdAt": "2025-01-25T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.368Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "i-market-research",
+  "title": "Competitive Landscape Analysis",
+  "description": "Deep dive into existing personal AI tools, memory systems, and MCP implementations. Identify white space and differentiation.",
+  "stage": "REFUTED",
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-01-20T00:00:00.000Z",
+      "note": "Started scanning the market"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2025-01-25T00:00:00.000Z",
+      "note": "Building competitive matrix"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2025-01-31T00:00:00.000Z",
+      "note": "Writing detailed analysis"
+    },
+    {
+      "stage": "REFUTED",
+      "timestamp": "2025-02-08T00:00:00.000Z",
+      "note": "Key insight: nobody owns the white-box PI niche"
+    }
+  ],
+  "tags": [
+    "research",
+    "competition",
+    "market"
+  ],
+  "parentId": "i-ai-startup",
+  "linkedPersons": [
+    "p-self-001"
+  ],
+  "priority": "medium",
+  "active": false,
+  "createdAt": "2025-01-20T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.369Z"
+}

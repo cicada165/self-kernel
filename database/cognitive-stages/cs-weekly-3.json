@@ -1,0 +1,17 @@
+{
+  "id": "cs-weekly-3",
+  "week": 3,
+  "startDate": "2025-01-29T00:00:00.000Z",
+  "endDate": "2025-02-05T00:00:00.000Z",
+  "dominantStage": "decision",
+  "summary": "Major decisions made: committing to the startup, finalizing architecture, beginning investor outreach. High energy, high clarity.",
+  "intentActivity": {
+    "i-career-change": "decision",
+    "i-funding": "exploration",
+    "i-product-vision": "decision"
+  },
+  "energyLevel": 0.9,
+  "clarityLevel": 0.8,
+  "createdAt": "2026-02-27T06:18:10.374Z",
+  "updatedAt": "2026-02-27T06:18:10.374Z"
+}

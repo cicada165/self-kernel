@@ -1,0 +1,12 @@
+{
+  "id": "0acb5eee-994a-4664-a68b-fce874523b04",
+  "sourceType": "intent",
+  "sourceId": "i-career-change",
+  "targetType": "intent",
+  "targetId": "i-ai-startup",
+  "label": "leads-to",
+  "strength": 1,
+  "context": "The career change is specifically motivated by this startup idea.",
+  "createdAt": "2026-02-27T06:18:10.372Z",
+  "updatedAt": "2026-02-27T06:18:10.372Z"
+}

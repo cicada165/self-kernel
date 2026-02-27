@@ -1,0 +1,12 @@
+{
+  "id": "b93e08ec-c1f5-446c-95d2-2935f82d0b85",
+  "sourceType": "intent",
+  "sourceId": "i-ai-startup",
+  "targetType": "intent",
+  "targetId": "i-team-building",
+  "label": "requires",
+  "strength": 0.85,
+  "context": "Need a founding team to execute.",
+  "createdAt": "2026-02-27T06:18:10.373Z",
+  "updatedAt": "2026-02-27T06:18:10.373Z"
+}

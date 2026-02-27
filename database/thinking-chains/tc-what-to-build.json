@@ -1,0 +1,49 @@
+{
+  "id": "tc-what-to-build",
+  "title": "What Should I Build?",
+  "description": "Exploring product directions in the personal AI space.",
+  "nodes": [
+    {
+      "id": "n1",
+      "content": "Started by listing everything that frustrates me about current AI tools: no memory continuity, no data ownership, no cross-platform context.",
+      "timestamp": "2025-01-20T00:00:00.000Z",
+      "type": "exploration",
+      "source": "self-reflection"
+    },
+    {
+      "id": "n2",
+      "content": "Deep dive into MCP specification. It's the right abstraction layer. The question is: what's the \"personal\" MCP server?",
+      "timestamp": "2025-01-23T00:00:00.000Z",
+      "type": "research",
+      "source": "llm-conversation"
+    },
+    {
+      "id": "n3",
+      "content": "Key insight from conversation with Alex: \"The data isn't the model. If you separate data sovereignty from model choice, you unlock something fundamentally new.\"",
+      "timestamp": "2025-01-25T00:00:00.000Z",
+      "type": "insight",
+      "source": "conversation",
+      "linkedPerson": "p-cofounder-alex"
+    },
+    {
+      "id": "n4",
+      "content": "Explored three directions: (A) Personal memory layer, (B) Intent management system, (C) Full PI kernel with Person/Intent/Relation ontology. C is the most ambitious but also the most defensible.",
+      "timestamp": "2025-01-29T00:00:00.000Z",
+      "type": "analysis",
+      "source": "self-analysis"
+    },
+    {
+      "id": "n5",
+      "content": "CONVERGENCE: Building a \"Self Kernel\" — a local-first, white-box personal intelligence core. Three atomic objects: Person, Intent, Relation. Exposed as MCP server.",
+      "timestamp": "2025-02-02T00:00:00.000Z",
+      "type": "decision",
+      "source": "self-reflection"
+    }
+  ],
+  "linkedIntents": [
+    "i-ai-startup",
+    "i-product-vision"
+  ],
+  "createdAt": "2025-01-20T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.370Z"
+}

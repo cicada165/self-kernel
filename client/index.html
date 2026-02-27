@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self Kernel — Personal Intelligence Core</title>
+  <meta name="description" content="Your Personal Intelligence Core. A local-first, white-box PI system for managing intents, relationships, and cognitive state.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">🧠</span>
+          <div class="logo-text">
+            <h1>Self Kernel</h1>
+            <span class="logo-subtitle">Personal Intelligence Core</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="nav-section">
+        <span class="nav-label">Core</span>
+        <button class="nav-item active" data-panel="overview" id="nav-overview">
+          <span class="nav-icon">◉</span>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-panel="graph" id="nav-graph">
+          <span class="nav-icon">◎</span>
+          <span>Knowledge Graph</span>
+        </button>
+        <button class="nav-item" data-panel="timeline" id="nav-timeline">
+          <span class="nav-icon">↗</span>
+          <span>Intent Timeline</span>
+        </button>
+        <button class="nav-item" data-panel="thinking" id="nav-thinking">
+          <span class="nav-icon">💭</span>
+          <span>Thinking Chains</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-label">Entities</span>
+        <button class="nav-item" data-panel="persons" id="nav-persons">
+          <span class="nav-icon">👤</span>
+          <span>Persons</span>
+        </button>
+        <button class="nav-item" data-panel="inspector" id="nav-inspector">
+          <span class="nav-icon">🔍</span>
+          <span>Data Inspector</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-label">Interface</span>
+        <button class="nav-item" data-panel="mcp" id="nav-mcp">
+          <span class="nav-icon">🔌</span>
+          <span>MCP Server</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="kernel-status" id="kernel-status-indicator">
+          <span class="status-dot online"></span>
+          <span>Kernel Online</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <div class="panel active" id="panel-overview"></div>
+      <div class="panel" id="panel-graph"></div>
+      <div class="panel" id="panel-timeline"></div>
+      <div class="panel" id="panel-thinking"></div>
+      <div class="panel" id="panel-persons"></div>
+      <div class="panel" id="panel-inspector"></div>
+      <div class="panel" id="panel-mcp"></div>
+    </main>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

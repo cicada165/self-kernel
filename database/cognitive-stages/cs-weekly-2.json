@@ -1,0 +1,17 @@
+{
+  "id": "cs-weekly-2",
+  "week": 2,
+  "startDate": "2025-01-22T00:00:00.000Z",
+  "endDate": "2025-01-29T00:00:00.000Z",
+  "dominantStage": "structuring",
+  "summary": "Ideas converging around personal intelligence concept. MCP research deepening. Alex conversations crystallizing architecture. Growing confidence.",
+  "intentActivity": {
+    "i-ai-startup": "exploration",
+    "i-product-vision": "structuring",
+    "i-market-research": "execution"
+  },
+  "energyLevel": 0.75,
+  "clarityLevel": 0.55,
+  "createdAt": "2026-02-27T06:18:10.374Z",
+  "updatedAt": "2026-02-27T06:18:10.374Z"
+}

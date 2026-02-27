@@ -1,0 +1,50 @@
+{
+  "id": "i-career-change",
+  "title": "Career Transition: PM → AI Startup Founder",
+  "description": "The overarching intent to leave big tech and build something meaningful in the personal AI space. This is the root intent that spawned all others.",
+  "stage": "DECISION",
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-01-15T00:00:00.000Z",
+      "note": "First serious thought about leaving"
+    },
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2025-01-20T00:00:00.000Z",
+      "note": "Researching startup landscape"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2025-01-27T00:00:00.000Z",
+      "note": "Narrowing focus to personal AI"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2025-02-04T00:00:00.000Z",
+      "note": "Decision made: going for it"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2025-02-09T00:00:00.000Z",
+      "note": "Started building prototype"
+    }
+  ],
+  "tags": [
+    "career",
+    "life-change",
+    "startup",
+    "ai"
+  ],
+  "parentId": null,
+  "linkedPersons": [
+    "p-self-001",
+    "p-mentor-sarah",
+    "p-cofounder-alex",
+    "p-colleague-david"
+  ],
+  "priority": "critical",
+  "active": true,
+  "createdAt": "2025-01-15T00:00:00.000Z",
+  "updatedAt": "2026-02-27T06:18:10.368Z"
+}

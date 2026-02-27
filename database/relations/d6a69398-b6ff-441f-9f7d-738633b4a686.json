@@ -1,0 +1,12 @@
+{
+  "id": "d6a69398-b6ff-441f-9f7d-738633b4a686",
+  "sourceType": "person",
+  "sourceId": "p-mentor-sarah",
+  "targetType": "intent",
+  "targetId": "i-funding",
+  "label": "advising-on",
+  "strength": 0.8,
+  "context": "Sarah is actively helping shape the fundraising approach.",
+  "createdAt": "2026-02-27T06:18:10.372Z",
+  "updatedAt": "2026-02-27T06:18:10.372Z"
+}

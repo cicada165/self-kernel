@@ -1,0 +1,12 @@
+{
+  "id": "93a63ad0-a27e-47a7-b213-ca59a776c5e6",
+  "sourceType": "person",
+  "sourceId": "p-investor-ming",
+  "targetType": "intent",
+  "targetId": "i-funding",
+  "label": "evaluating",
+  "strength": 0.5,
+  "context": "Ming is a potential lead investor for the seed round.",
+  "createdAt": "2026-02-27T06:18:10.372Z",
+  "updatedAt": "2026-02-27T06:18:10.372Z"
+}
