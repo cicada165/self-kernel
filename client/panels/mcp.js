@@ -111,6 +111,12 @@ export async function renderMcp(container) {
                 </div>
                 <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">${task.parameters}</div>
                 <div style="font-size: 11px; font-family: var(--font-mono); color: var(--accent-primary);">ID: ${task.task_id}</div>
+                ${task.status === 'staged' ? `
+                  <div style="margin-top: 12px; display: flex; gap: 8px;">
+                    <button class="btn btn-primary btn-sm btn-approve" data-id="${task.task_id}">✅ Execute</button>
+                    <button class="btn btn-secondary btn-sm btn-reject" data-id="${task.task_id}">❌ Reject</button>
+                  </div>
+                ` : ''}
               </div>
             `).join('')}
           </div>
@@ -139,6 +145,27 @@ export async function renderMcp(container) {
         ` : '<p style="font-size: 12px; color: var(--text-muted);">No access logs yet. Use the Query Simulator to generate some.</p>'}
       </div>
     `;
+
+    // Wire up Continuous Learning Action buttons
+    container.querySelectorAll('.btn-approve').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const taskId = e.target.dataset.id;
+        try {
+          await api.submitReward(taskId, 1);
+          renderMcp(container); // Refresh
+        } catch (err) { console.error(err); }
+      });
+    });
+
+    container.querySelectorAll('.btn-reject').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const taskId = e.target.dataset.id;
+        try {
+          await api.submitReward(taskId, -1);
+          renderMcp(container); // Refresh
+        } catch (err) { console.error(err); }
+      });
+    });
 
     // Wire up simulate button
     document.getElementById('mcp-simulate-btn')?.addEventListener('click', async () => {

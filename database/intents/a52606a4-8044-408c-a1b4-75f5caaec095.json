@@ -1,0 +1,17 @@
+{
+  "id": "a52606a4-8044-408c-a1b4-75f5caaec095",
+  "title": "DecayTest",
+  "description": "Test",
+  "precision": 0.8,
+  "stage": "EXPLORATION",
+  "confidence": 0.8,
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2026-02-27T19:22:21.977Z",
+      "note": "Intent created/identified"
+    }
+  ],
+  "createdAt": "2026-02-27T19:22:21.977Z",
+  "updatedAt": "2026-02-27T19:22:21.978Z"
+}

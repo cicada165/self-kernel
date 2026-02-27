@@ -9,6 +9,7 @@
 import { randomUUID as uuidv4 } from 'crypto';
 import * as storage from './storage.js';
 import * as fsm from './fsm.js';
+import * as anomaly from './anomaly.js';
 
 // Since we cannot install openai/huggingface SDKs due to env permissions,
 // we interface with the GitHub Models API directly using fetch.
@@ -34,6 +35,7 @@ Return ONLY a valid JSON object with the following schema, and absolutely no mar
       "description": "A 1-2 sentence description of what the user is thinking/planning",
       "stage": "EXPLORATION" | "REFINING" | "REFUTED" | "DECISION" (Choose the best fit),
       "priority": "low" | "medium" | "high" | "critical",
+      "precision": 0.0-1.0 (A confidence score of how clearly and seriously the user articulated this intent),
       "tags": ["tag1", "tag2"]
     }
   ],
@@ -54,7 +56,30 @@ Return ONLY a valid JSON object with the following schema, and absolutely no mar
 export async function processRawInput(rawText, source = 'text-input') {
     console.log(`[Ingest] Processing raw input from ${source} (${rawText.length} chars)`);
 
-    // 1. Call LLM to extract entities
+    // 1. Calculate Anomaly Score
+    const anomalyResult = await anomaly.calculateAnomalyScore(rawText);
+    await anomaly.updateBaseline(rawText);
+
+    if (!anomalyResult.isNovel) {
+        console.log(`[Ingest] Input deemed ROUTINE (score: ${anomalyResult.score.toFixed(2)}). Bypassing LLM.`);
+        const intent = await fsm.createIntent({
+            title: rawText.substring(0, 40) + (rawText.length > 40 ? '...' : ''),
+            description: rawText,
+            priority: 'low',
+            tags: ['routine', 'auto-ingest']
+        });
+        await storage.create('mcp-logs', {
+            agentId: 'system-anomaly-filter',
+            type: 'ROUTINE_LOG',
+            intentId: intent.id,
+            details: `Routine input logged directly (Score: ${anomalyResult.score.toFixed(2)})`
+        });
+        return { message: "Routine input logged directly", anomalyScore: anomalyResult.score, intentId: intent.id };
+    }
+
+    console.log(`[Ingest] Input deemed NOVEL (score: ${anomalyResult.score.toFixed(2)}). Routing to LLM Auto-Annotator.`);
+
+    // 2. Call LLM to extract entities
     const response = await fetch(OMNI_URL, {
         method: 'POST',
         headers: {
@@ -135,6 +160,7 @@ export async function processRawInput(rawText, source = 'text-input') {
                 description: i.description,
                 stage: i.stage || 'EXPLORATION',
                 priority: i.priority || 'medium',
+                precision: i.precision || 0.3,
                 tags: i.tags || [],
                 source: 'auto-annotator'
             });

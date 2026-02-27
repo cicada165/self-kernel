@@ -14,6 +14,7 @@ import relationsRouter from './routes/relations.js';
 import kernelRouter from './routes/kernel.js';
 import mcpRouter from './routes/mcp.js';
 import ingestRouter from './routes/ingest.js';
+import learningRouter from './routes/learning.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -41,6 +42,7 @@ app.use('/api/relations', relationsRouter);
 app.use('/api/kernel', kernelRouter);
 app.use('/api/mcp', mcpRouter);
 app.use('/api/ingest', ingestRouter);
+app.use('/api/learning', learningRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

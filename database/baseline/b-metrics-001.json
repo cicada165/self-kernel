@@ -1,0 +1,16 @@
+{
+  "id": "b-metrics-001",
+  "count": 3,
+  "length": {
+    "mean": 12,
+    "m2": 2,
+    "variance": 0.6666666666666666
+  },
+  "hour": {
+    "mean": 11,
+    "m2": 0,
+    "variance": 0
+  },
+  "createdAt": "2026-02-27T19:22:40.618Z",
+  "updatedAt": "2026-02-27T19:22:40.620Z"
+}

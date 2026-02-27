@@ -20,7 +20,8 @@ const COLLECTIONS = [
     'thinking-chains',
     'cognitive-stages',
     'trajectories',
-    'mcp-logs'
+    'mcp-logs',
+    'baseline'
 ];
 
 /** Ensure all collection directories exist */

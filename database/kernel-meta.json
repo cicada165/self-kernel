@@ -3,5 +3,12 @@
   "createdAt": "2026-02-27T06:18:10.366Z",
   "version": "0.1.0",
   "owner": "Anonymous",
-  "description": "My Personal Intelligence Core"
+  "description": "My Personal Intelligence Core",
+  "parameters": {
+    "anomalyThreshold": 2,
+    "executionThreshold": 0.95,
+    "decayRate": 0.05
+  },
+  "id": "kernel-meta",
+  "updatedAt": "2026-02-27T19:21:29.412Z"
 }

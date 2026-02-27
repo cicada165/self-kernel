@@ -8,23 +8,26 @@
 
 import { randomUUID as uuidv4 } from 'crypto';
 import * as storage from './storage.js';
+import * as learning from './learning.js';
 
 // The "Outbox" of tasks pushed to execution
 const executionQueue = [];
 
-export function buildExecutionPayload(intent, contextPersons = []) {
+export function buildExecutionPayload(intent, contextPersons = [], pastTransitions = []) {
     return {
         task_id: uuidv4(),
         intent_source_id: intent.id,
         directive: intent.title,
         parameters: intent.description,
         priority: intent.priority || 'medium',
+        confidence_trigger: intent.confidence || 1.0,
         context: {
             involved_entities: contextPersons.map(p => ({ role: p.role, name: p.name })),
             tags: intent.tags || [],
+            predicted_tools: pastTransitions,
             kernel_timestamp: new Date().toISOString()
         },
-        status: 'dispatched'
+        status: 'staged' // Lazy Handoff: requires approval
     };
 }
 
@@ -32,7 +35,14 @@ export function buildExecutionPayload(intent, contextPersons = []) {
  * Triggered by the FSM when an Intent reaches DECISION state
  */
 export async function enqueueForExecution(intent) {
-    console.log(`[Orchestrator] Intent '${intent.title}' reached DECISION. Building execution payload...`);
+    const params = await learning.getSystemParameters();
+
+    if ((intent.confidence || 0) < params.executionThreshold) {
+        console.log(`[Orchestrator] Intent '${intent.title}' reached DECISION but confidence ${(intent.confidence || 0).toFixed(2)} < ${params.executionThreshold.toFixed(2)}. Waiting for more evidence.`);
+        return;
+    }
+
+    console.log(`[Orchestrator] Intent '${intent.title}' reached P>${params.executionThreshold.toFixed(2)}. Building proactive execution payload...`);
 
     try {
         // 1. Gather Context (The DAG)
@@ -46,20 +56,31 @@ export async function enqueueForExecution(intent) {
 
         const contextPersons = allPersons.filter(p => relatedPersonIds.includes(p.id));
 
+        // 1.5 Transition Matrix Modeling
+        const trajectories = await storage.listAll('trajectories');
+        const pastTransitions = [];
+        for (const t of trajectories) {
+            const idx = t.milestones.findIndex(m => m.intentId === intent.id);
+            if (idx >= 0 && idx < t.milestones.length - 1) {
+                // predict next steps based on historical trajectory
+                pastTransitions.push(t.milestones[idx + 1].label);
+            }
+        }
+
         // 2. Build the Payload for "Downstream Hands"
-        const executionPayload = buildExecutionPayload(intent, contextPersons);
+        const executionPayload = buildExecutionPayload(intent, contextPersons, pastTransitions);
 
         executionQueue.push(executionPayload);
 
         // 3. Log to Activity Feed (for Dashboard)
         await storage.create('mcp-logs', {
             agentId: 'openclaw-executor',
-            type: 'PROACTIVE_DISPATCH',
+            type: 'PROACTIVE_STAGE',
             intentId: intent.id,
-            details: `Kernel dynamically routed intent to executor: ${intent.title}`
+            details: `Kernel generated staged payload for Openclaw (P=${intent.confidence.toFixed(2)})`
         });
 
-        console.log(`[Orchestrator] Successfully dispatched to Openclaw simulator: ${executionPayload.task_id}`);
+        console.log(`[Orchestrator] Successfully staged payload for Openclaw approval: ${executionPayload.task_id}`);
 
     } catch (err) {
         console.error(`[Orchestrator] Failed to execute intent ${intent.id}:`, err);
@@ -71,4 +92,11 @@ export async function enqueueForExecution(intent) {
  */
 export function getExecutionQueue() {
     return executionQueue;
+}
+
+export function removeFromExecutionQueue(taskId) {
+    const idx = executionQueue.findIndex(t => t.task_id === taskId);
+    if (idx !== -1) {
+        executionQueue.splice(idx, 1);
+    }
 }

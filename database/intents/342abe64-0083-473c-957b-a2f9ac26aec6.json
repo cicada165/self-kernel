@@ -1,0 +1,27 @@
+{
+  "id": "342abe64-0083-473c-957b-a2f9ac26aec6",
+  "title": "Test",
+  "description": "Test",
+  "precision": 0.1,
+  "stage": "DECISION",
+  "confidence": 0.991,
+  "stageHistory": [
+    {
+      "stage": "EXPLORATION",
+      "timestamp": "2026-02-27T19:22:21.970Z",
+      "note": "Intent created/identified"
+    },
+    {
+      "stage": "REFINING",
+      "timestamp": "2026-02-27T19:22:21.972Z",
+      "note": "Confidence exceeded P>0.70 refinement threshold"
+    },
+    {
+      "stage": "DECISION",
+      "timestamp": "2026-02-27T19:22:21.975Z",
+      "note": "Confidence exceeded P>0.95 execution threshold"
+    }
+  ],
+  "createdAt": "2026-02-27T19:22:21.970Z",
+  "updatedAt": "2026-02-27T19:22:21.975Z"
+}

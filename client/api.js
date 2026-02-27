@@ -58,4 +58,8 @@ export const api = {
 
     // Auto-Annotator
     ingest: (text, source) => request('/ingest', { method: 'POST', body: { text, source } }),
+
+    // Continuous Learning
+    submitReward: (taskId, reward) => request('/learning/reward', { method: 'POST', body: { taskId, reward } }),
+    getLearningParams: () => request('/learning/parameters')
 };
