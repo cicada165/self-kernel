@@ -21,7 +21,12 @@ const COLLECTIONS = [
     'cognitive-stages',
     'trajectories',
     'mcp-logs',
-    'baseline'
+    'baseline',
+    'governance-rules',
+    'governance-logs',
+    'suggestions',
+    'rat-patterns',
+    'execution-payloads'
 ];
 
 /** Ensure all collection directories exist */
@@ -158,4 +163,32 @@ export async function saveRawData(collection, id, rawJson) {
     parsed.updatedAt = new Date().toISOString();
     await fs.writeFile(filePath, JSON.stringify(parsed, null, 2));
     return parsed;
+}
+
+/** Get kernel metadata (system-wide state, learning params, etc.) */
+export async function getMeta() {
+    const metaPath = path.join(DATA_DIR, 'kernel-meta.json');
+    try {
+        const content = await fs.readFile(metaPath, 'utf-8');
+        return JSON.parse(content);
+    } catch {
+        // Return default meta if file doesn't exist
+        return {
+            kernelId: uuidv4(),
+            createdAt: new Date().toISOString(),
+            version: '0.1.0',
+            owner: 'Anonymous',
+            description: 'My Personal Intelligence Core',
+            learningHistory: [],
+            suggestionFeedback: []
+        };
+    }
+}
+
+/** Save kernel metadata */
+export async function saveMeta(meta) {
+    const metaPath = path.join(DATA_DIR, 'kernel-meta.json');
+    meta.updatedAt = new Date().toISOString();
+    await fs.writeFile(metaPath, JSON.stringify(meta, null, 2));
+    return meta;
 }

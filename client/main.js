@@ -8,8 +8,19 @@ import { renderGraph } from './panels/graph.js';
 import { renderTimeline } from './panels/timeline.js';
 import { renderThinking } from './panels/thinking.js';
 import { renderPersons } from './panels/persons.js';
+import { renderRelationships } from './panels/relationships.js';
 import { renderInspector } from './panels/inspector.js';
+import { renderIntentProxy } from './panels/intentProxy.js';
 import { renderMcp } from './panels/mcp.js';
+import { renderFsm } from './panels/fsm.js';
+import { renderAutomations } from './panels/automations.js';
+import { renderStrategies } from './panels/strategies.js';
+import { renderHealthPanel } from './panels/health.js';
+import { renderTrajectoryBuilder } from './panels/trajectoryBuilder.js';
+import { renderSearch } from './panels/search.js';
+import { OnboardingOverlay } from './components/onboarding.js';
+import { QuickAdd } from './components/quick-add.js';
+import { LearningFeed } from './components/learning-feed.js';
 
 const panelRenderers = {
     overview: renderOverview,
@@ -17,8 +28,16 @@ const panelRenderers = {
     timeline: renderTimeline,
     thinking: renderThinking,
     persons: renderPersons,
+    relationships: renderRelationships,
     inspector: renderInspector,
+    intentProxy: renderIntentProxy,
     mcp: renderMcp,
+    fsm: renderFsm,
+    automations: renderAutomations,
+    strategies: renderStrategies,
+    health: renderHealthPanel,
+    trajectoryBuilder: renderTrajectoryBuilder,
+    search: renderSearch,
 };
 
 let currentPanel = 'overview';
@@ -64,10 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
             '3': 'timeline',
             '4': 'thinking',
             '5': 'persons',
-            '6': 'inspector',
-            '7': 'mcp'
+            '6': 'relationships',
+            '7': 'inspector',
+            '8': 'intentProxy',
+            '9': 'strategies',
+            '0': 'automations'
         };
-        if (shortcuts[e.key] && !e.target.closest('textarea, input')) {
+        if (shortcuts[e.key] && !e.target.closest('textarea, input, select')) {
             e.preventDefault();
             switchPanel(shortcuts[e.key]);
         }
@@ -78,6 +100,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check server connectivity
     checkServer();
+
+    // Initialize UX components
+    const onboarding = new OnboardingOverlay();
+    onboarding.show();
+
+    new QuickAdd();
+
+    const learningFeed = new LearningFeed();
+    window.learningFeedInstance = learningFeed; // Make globally accessible
+
+    // Add sample learning event after 3 seconds (demo)
+    setTimeout(() => {
+        learningFeed.addEvent({
+            type: 'behavior_learned',
+            title: 'Welcome to Self Kernel!',
+            description: 'Your kernel is ready to learn from your behavior patterns and help organize your thoughts.',
+            details: {
+                'Status': 'Active',
+                'Learning Mode': 'Continuous'
+            }
+        });
+    }, 3000);
 });
 
 async function checkServer() {

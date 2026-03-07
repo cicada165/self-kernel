@@ -8,10 +8,12 @@ import { Router } from 'express';
 import * as storage from '../storage.js';
 import * as fsm from '../fsm.js';
 
+import { checkTriggers } from '../services/fsm.js';
+
 const router = Router();
 
 // Valid cognitive stages
-const STAGES = [fsm.STATES.EXPLORATION, fsm.STATES.REFINING, fsm.STATES.DECISION, fsm.STATES.REFUTED];
+const STAGES = ['exploration', 'structuring', 'decision', 'execution', 'reflection'];
 
 // GET /api/intents — list all intents
 router.get('/', async (req, res) => {
@@ -55,20 +57,32 @@ router.put('/:id', async (req, res) => {
         const existing = await storage.getById('intents', req.params.id);
         if (!existing) return res.status(404).json({ error: 'Intent not found' });
 
-        // If stage is changing, add to stage history via FSM
+        // If stage is changing, add to stage history
         if (req.body.stage && req.body.stage !== existing.stage) {
-            await fsm.transitionState(req.params.id, req.body.stage, req.body.stageNote || `Moved to ${req.body.stage}`);
+            const history = existing.stageHistory || [];
+            history.push({
+                stage: req.body.stage,
+                timestamp: new Date().toISOString(),
+                note: req.body.stageNote || `Moved to ${req.body.stage}`
+            });
+            req.body.stageHistory = history;
+
+            // Check FSM Triggers!
+            // We run this async so it doesn't block the API response
+            checkTriggers(req.params.id, existing.stage, req.body.stage).catch(err => {
+                console.error('[FSM Error]', err);
+            });
         }
 
-        // Fetch fresh object in case FSM modified it
-        const fresh = await storage.getById('intents', req.params.id);
+        // Fetch fresh object in case FSM modified it (though now we modify req.body directly)
+        // const fresh = await storage.getById('intents', req.params.id); // No longer needed as we're not using fsm.transitionState
 
         // Remove stage from body to not overwrite FSM logic
         const updates = { ...req.body };
-        delete updates.stage;
-        delete updates.stageHistory;
+        delete updates.stage; // Stage is handled by history, and we don't want to overwrite it directly
+        delete updates.stageHistory; // History is already prepared in req.body.stageHistory
 
-        const updated = await storage.update('intents', req.params.id, { ...fresh, ...updates, updatedAt: new Date().toISOString() });
+        const updated = await storage.update('intents', req.params.id, { ...existing, ...updates, updatedAt: new Date().toISOString(), stage: req.body.stage || existing.stage, stageHistory: req.body.stageHistory || existing.stageHistory });
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: 'Failed to update intent: ' + err.message });

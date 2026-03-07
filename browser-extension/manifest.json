@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "Self Kernel - Quick Thought Capture",
+  "version": "1.0.0",
+  "description": "Quickly capture thoughts and ideas directly to your Self Kernel",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "contextMenus",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Open quick capture"
+    },
+    "quick-capture": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+N",
+        "mac": "Command+Shift+N"
+      },
+      "description": "Quick capture selected text"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

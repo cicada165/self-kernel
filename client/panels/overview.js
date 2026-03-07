@@ -8,13 +8,14 @@ export async function renderOverview(container) {
   container.innerHTML = '<div class="panel-header"><h2>⌛ Loading kernel...</h2></div>';
 
   try {
-    const [status, activity, intents, persons, chains, trajectories] = await Promise.all([
+    const [status, activity, intents, persons, chains, trajectories, cognitiveStages] = await Promise.all([
       api.getStatus(),
       api.getActivity(),
       api.getIntents(),
       api.getPersons(),
       api.getChains(),
-      api.getTrajectories()
+      api.getTrajectories(),
+      api.getCognitiveStages()
     ]);
 
     const activeIntents = intents.filter(i => i.active);
@@ -74,9 +75,9 @@ export async function renderOverview(container) {
         <!-- Cognitive Stage Evolution -->
         <div class="card">
           <div class="card-header">
-            <span class="card-title">Cognitive Evolution (30 Days)</span>
+            <span class="card-title">📊 Cognitive Evolution (Weekly)</span>
           </div>
-          ${renderCognitiveChart(intents)}
+          ${renderCognitiveStagesTimeline(cognitiveStages)}
         </div>
       </div>
 
@@ -177,32 +178,52 @@ export async function renderOverview(container) {
   }
 }
 
-function renderCognitiveChart(intents) {
-  // Aggregate stages from intents
-  const stageCounts = { exploration: 0, structuring: 0, decision: 0, execution: 0, reflection: 0 };
-  intents.forEach(i => { if (stageCounts[i.stage] !== undefined) stageCounts[i.stage]++; });
-  const total = Math.max(intents.length, 1);
+function renderCognitiveStagesTimeline(cognitiveStages) {
+  if (!cognitiveStages || cognitiveStages.length === 0) {
+    return '<p style="color: var(--text-muted); padding: 16px;">No cognitive stages tracked yet. The system will automatically create weekly snapshots as you use it.</p>';
+  }
 
-  const stageColors = {
-    exploration: 'var(--stage-exploration)',
-    structuring: 'var(--stage-structuring)',
-    decision: 'var(--stage-decision)',
-    execution: 'var(--stage-execution)',
-    reflection: 'var(--stage-reflection)'
+  const stageColorMap = {
+    exploration: '#4A9EFF',
+    structuring: '#9B59B6',
+    decision: '#F39C12',
+    execution: '#27AE60',
+    reflection: '#95A5A6'
   };
 
+  // Take last 8 weeks for better visualization
+  const recentStages = cognitiveStages.slice(-8);
+
   return `
-    <div style="display: flex; gap: 8px; align-items: flex-end; height: 120px; padding: 12px 0;">
-      ${Object.entries(stageCounts).map(([stage, count]) => {
-    const pct = Math.max((count / total) * 100, 8);
-    return `
-          <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;">
-            <div style="width: 100%; height: ${pct}px; min-height: 8px; background: ${stageColors[stage]}; border-radius: 4px 4px 0 0; opacity: 0.7; transition: height 0.5s ease;"></div>
-            <span style="font-size: 10px; color: var(--text-muted); text-transform: capitalize; text-align: center;">${stage}</span>
-            <span style="font-size: 14px; font-weight: 600; color: ${stageColors[stage]};">${count}</span>
+    <div style="padding: 16px 12px;">
+      <!-- Weekly Progress -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        ${recentStages.map(stage => {
+          const color = stageColorMap[stage.dominantStage] || '#95A5A6';
+          return `
+            <div style="flex: 1; text-align: center;">
+              <div style="height: 60px; background: ${color}; border-radius: 6px; opacity: ${stage.clarityLevel || 0.5}; margin-bottom: 6px; position: relative; overflow: hidden;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: ${(stage.energyLevel || 0.5) * 100}%; background: rgba(255,255,255,0.2);"></div>
+              </div>
+              <div style="font-size: 9px; color: var(--text-muted); margin-bottom: 2px;">Week ${stage.week}</div>
+              <div style="font-size: 10px; font-weight: 600; color: ${color}; text-transform: capitalize;">${stage.dominantStage}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- Current Week Summary -->
+      ${cognitiveStages.length > 0 ? `
+        <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; border-left: 3px solid ${stageColorMap[cognitiveStages[cognitiveStages.length - 1].dominantStage]};">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">Current Cognitive State</div>
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px; text-transform: capitalize;">${cognitiveStages[cognitiveStages.length - 1].dominantStage}</div>
+          <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">${cognitiveStages[cognitiveStages.length - 1].summary}</div>
+          <div style="display: flex; gap: 12px; margin-top: 8px; font-size: 10px;">
+            <span>💡 Clarity: ${Math.round((cognitiveStages[cognitiveStages.length - 1].clarityLevel || 0) * 100)}%</span>
+            <span>⚡ Energy: ${Math.round((cognitiveStages[cognitiveStages.length - 1].energyLevel || 0) * 100)}%</span>
           </div>
-        `;
-  }).join('')}
+        </div>
+      ` : ''}
     </div>
   `;
 }

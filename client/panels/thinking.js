@@ -5,6 +5,7 @@
 import { api } from '../api.js';
 
 let selectedChainId = null;
+let viewMode = 'list'; // 'list' or 'graph'
 
 export async function renderThinking(container) {
     container.innerHTML = '<div class="panel-header"><h2>⌛ Loading thinking chains...</h2></div>';
@@ -17,6 +18,15 @@ export async function renderThinking(container) {
       <div class="panel-header">
         <h2>💭 Thinking Chains</h2>
         <p>Cross-session thought threads — see how questions on Day 1 connect to decisions on Day 14.</p>
+
+        <div class="view-toggle">
+          <button class="btn-toggle ${viewMode === 'list' ? 'active' : ''}" onclick="window.thinkingPanel.switchView('list')">
+            📋 List View
+          </button>
+          <button class="btn-toggle ${viewMode === 'graph' ? 'active' : ''}" onclick="window.thinkingPanel.switchView('graph')">
+            🌐 Graph View
+          </button>
+        </div>
       </div>
 
       <div class="chain-list" id="chain-list">
@@ -30,7 +40,7 @@ export async function renderThinking(container) {
       </div>
 
       <div class="chain-detail" id="chain-detail">
-        ${selectedChainId ? renderChainDetail(chains[0]) : '<p style="color: var(--text-muted);">Select a thinking chain above.</p>'}
+        ${selectedChainId ? (viewMode === 'graph' ? renderGraphView(chains[0]) : renderChainDetail(chains[0])) : '<p style="color: var(--text-muted);">Select a thinking chain above.</p>'}
       </div>
     `;
 
@@ -47,10 +57,16 @@ export async function renderThinking(container) {
                 // Render detail
                 const chain = chains.find(c => c.id === id);
                 if (chain) {
-                    document.getElementById('chain-detail').innerHTML = renderChainDetail(chain);
+                    document.getElementById('chain-detail').innerHTML = viewMode === 'graph' ? renderGraphView(chain) : renderChainDetail(chain);
                 }
             });
         });
+
+        // Attach global handler
+        window.thinkingPanel = {
+            switchView: (mode) => switchView(mode, container, chains)
+        };
+
     } catch (err) {
         container.innerHTML = `<div class="panel-header"><h2>💭 Thinking Chains</h2><p style="color: var(--accent-danger);">Error: ${err.message}</p></div>`;
     }

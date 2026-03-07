@@ -9,11 +9,15 @@
 import { randomUUID as uuidv4 } from 'crypto';
 import * as storage from './storage.js';
 import * as learning from './learning.js';
+import * as rat from './services/rat.js';
 
 // The "Outbox" of tasks pushed to execution
 const executionQueue = [];
 
 export function buildExecutionPayload(intent, contextPersons = [], pastTransitions = []) {
+    // Calculate predictive confidence score
+    const predictiveConfidence = calculatePredictiveConfidence(intent, contextPersons, pastTransitions);
+
     return {
         task_id: uuidv4(),
         intent_source_id: intent.id,
@@ -21,6 +25,7 @@ export function buildExecutionPayload(intent, contextPersons = [], pastTransitio
         parameters: intent.description,
         priority: intent.priority || 'medium',
         confidence_trigger: intent.confidence || 1.0,
+        predictive_confidence: predictiveConfidence,
         context: {
             involved_entities: contextPersons.map(p => ({ role: p.role, name: p.name })),
             tags: intent.tags || [],
@@ -29,6 +34,107 @@ export function buildExecutionPayload(intent, contextPersons = [], pastTransitio
         },
         status: 'staged' // Lazy Handoff: requires approval
     };
+}
+
+/**
+ * Calculate predictive confidence score for an execution payload
+ * Considers multiple signals:
+ * - Intent precision/confidence
+ * - Historical success patterns
+ * - Context completeness
+ * - Stakeholder engagement
+ * - Time-based factors
+ *
+ * Returns a score between 0 and 1
+ */
+function calculatePredictiveConfidence(intent, contextPersons, pastTransitions) {
+    let confidence = 0;
+    let weights = 0;
+
+    // Signal 1: Intent's base confidence/precision (weight: 30%)
+    const baseConfidence = intent.precision || intent.confidence || 0.5;
+    confidence += baseConfidence * 0.30;
+    weights += 0.30;
+
+    // Signal 2: Completeness score (weight: 20%)
+    // Check if intent has sufficient information
+    const completenessScore = calculateCompletenessScore(intent);
+    confidence += completenessScore * 0.20;
+    weights += 0.20;
+
+    // Signal 3: Stakeholder signal (weight: 15%)
+    // More involved stakeholders = higher confidence
+    const stakeholderScore = Math.min(1.0, contextPersons.length / 3); // 3+ stakeholders = max
+    confidence += stakeholderScore * 0.15;
+    weights += 0.15;
+
+    // Signal 4: Historical trajectory evidence (weight: 20%)
+    // If similar patterns existed, higher confidence
+    const trajectoryScore = pastTransitions.length > 0 ? 0.8 : 0.3;
+    confidence += trajectoryScore * 0.20;
+    weights += 0.20;
+
+    // Signal 5: Intent maturity (weight: 10%)
+    // How long has this intent existed?
+    const maturityScore = calculateMaturityScore(intent);
+    confidence += maturityScore * 0.10;
+    weights += 0.10;
+
+    // Signal 6: Stage progression velocity (weight: 5%)
+    // Did intent move through stages quickly (good) or slowly (uncertain)?
+    const velocityScore = intent.stage === 'execution' ? 0.9 :
+                         intent.stage === 'decision' ? 0.7 :
+                         intent.stage === 'structuring' ? 0.5 : 0.3;
+    confidence += velocityScore * 0.05;
+    weights += 0.05;
+
+    // Normalize
+    const finalConfidence = weights > 0 ? confidence / weights : 0.5;
+
+    return Math.max(0, Math.min(1, finalConfidence)); // Clamp to [0, 1]
+}
+
+/**
+ * Calculate completeness score based on intent metadata
+ */
+function calculateCompletenessScore(intent) {
+    let score = 0;
+
+    // Has title (required)
+    if (intent.title && intent.title.length > 5) score += 0.2;
+
+    // Has description (important)
+    if (intent.description && intent.description.length > 20) score += 0.3;
+
+    // Has tags (helps with pattern matching)
+    if (intent.tags && intent.tags.length > 0) score += 0.2;
+
+    // Has priority set
+    if (intent.priority && intent.priority !== 'unknown') score += 0.1;
+
+    // Has parent or children (part of hierarchy)
+    if (intent.parent || (intent.children && intent.children.length > 0)) score += 0.2;
+
+    return Math.min(1.0, score);
+}
+
+/**
+ * Calculate maturity score based on intent age and updates
+ */
+function calculateMaturityScore(intent) {
+    if (!intent.createdAt) return 0.5;
+
+    const now = Date.now();
+    const created = new Date(intent.createdAt).getTime();
+    const ageInDays = (now - created) / (1000 * 60 * 60 * 24);
+
+    // Sweet spot: 1-7 days (enough time to mature, not too stale)
+    if (ageInDays < 0.5) return 0.3; // Too new, might be premature
+    if (ageInDays >= 0.5 && ageInDays <= 7) return 0.9; // Optimal maturity
+    if (ageInDays > 7 && ageInDays <= 30) return 0.7; // Getting older
+    if (ageInDays > 30) return 0.5; // Stale, might need refresh
+
+    return 0.5;
 }
 
 /**
@@ -68,7 +174,10 @@ export async function enqueueForExecution(intent) {
         }
 
         // 2. Build the Payload for "Downstream Hands"
-        const executionPayload = buildExecutionPayload(intent, contextPersons, pastTransitions);
+        let executionPayload = buildExecutionPayload(intent, contextPersons, pastTransitions);
+
+        // 2.5 Enhance payload with RAT (Retrieval-Augmented Trajectory) predictions
+        executionPayload = await rat.enhancePayloadWithRAT(executionPayload);
 
         executionQueue.push(executionPayload);
 

@@ -30,6 +30,10 @@
           <span class="nav-icon">◉</span>
           <span>Overview</span>
         </button>
+        <button class="nav-item" data-panel="search" id="nav-search">
+          <span class="nav-icon">🔍</span>
+          <span>Universal Search</span>
+        </button>
         <button class="nav-item" data-panel="graph" id="nav-graph">
           <span class="nav-icon">◎</span>
           <span>Knowledge Graph</span>
@@ -37,6 +41,10 @@
         <button class="nav-item" data-panel="timeline" id="nav-timeline">
           <span class="nav-icon">↗</span>
           <span>Intent Timeline</span>
+        </button>
+        <button class="nav-item" data-panel="trajectoryBuilder" id="nav-trajectoryBuilder">
+          <span class="nav-icon">🛤️</span>
+          <span>Trajectory Builder</span>
         </button>
         <button class="nav-item" data-panel="thinking" id="nav-thinking">
           <span class="nav-icon">💭</span>
@@ -50,17 +58,49 @@
           <span class="nav-icon">👤</span>
           <span>Persons</span>
         </button>
+        <button class="nav-item" data-panel="relationships" id="nav-relationships">
+          <span class="nav-icon">🔗</span>
+          <span>Relationships</span>
+        </button>
         <button class="nav-item" data-panel="inspector" id="nav-inspector">
-          <span class="nav-icon">🔍</span>
+          <span class="nav-icon">📋</span>
           <span>Data Inspector</span>
         </button>
       </div>
 
       <div class="nav-section">
-        <span class="nav-label">Interface</span>
+        <span class="nav-label">Intelligence</span>
+        <button class="nav-item" data-panel="intentProxy" id="nav-intentProxy">
+          <span class="nav-icon">🤖</span>
+          <span>Intent Proxy</span>
+        </button>
+        <button class="nav-item" data-panel="strategies" id="nav-strategies">
+          <span class="nav-icon">🛡️</span>
+          <span>Governance Rules</span>
+        </button>
+        <button class="nav-item" data-panel="automations" id="nav-automations">
+          <span class="nav-icon">🔧</span>
+          <span>OpenClaw Automations</span>
+        </button>
         <button class="nav-item" data-panel="mcp" id="nav-mcp">
           <span class="nav-icon">🔌</span>
           <span>MCP Server</span>
+        </button>
+        <button class="nav-item" data-panel="fsm" id="nav-fsm">
+          <span class="nav-icon">⚡</span>
+          <span>FSM & Auto-Labeler</span>
+        </button>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-label">System</span>
+        <button class="nav-item" data-panel="insights" id="nav-insights">
+          <span class="nav-icon">📊</span>
+          <span>Insights & Analytics</span>
+        </button>
+        <button class="nav-item" data-panel="health" id="nav-health">
+          <span class="nav-icon">🏥</span>
+          <span>System Health</span>
         </button>
       </div>
 
@@ -75,12 +115,23 @@
     <!-- Main Content -->
     <main id="main-content">
       <div class="panel active" id="panel-overview"></div>
+      <div class="panel" id="panel-search"></div>
       <div class="panel" id="panel-graph"></div>
       <div class="panel" id="panel-timeline"></div>
+      <div class="panel" id="panel-trajectoryBuilder"></div>
       <div class="panel" id="panel-thinking"></div>
       <div class="panel" id="panel-persons"></div>
+      <div class="panel" id="panel-relationships"></div>
       <div class="panel" id="panel-inspector"></div>
+      <div class="panel" id="panel-intentProxy"></div>
+      <div class="panel" id="panel-strategies"></div>
+      <div class="panel" id="panel-automations"></div>
       <div class="panel" id="panel-mcp"></div>
+      <div class="panel" id="panel-fsm"></div>
+      <div class="panel" id="panel-insights"></div>
+      <div class="panel" id="panel-health">
+        <div id="health-panel"></div>
+      </div>
     </main>
   </div>
 
