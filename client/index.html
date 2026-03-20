@@ -12,6 +12,16 @@
 </head>
 <body>
   <div id="app">
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="mobile-overlay"></div>
+
     <!-- Sidebar Navigation -->
     <nav id="sidebar">
       <div class="sidebar-header">
@@ -90,6 +100,14 @@
           <span class="nav-icon">⚡</span>
           <span>FSM & Auto-Labeler</span>
         </button>
+        <button class="nav-item" data-panel="clusters" id="nav-clusters">
+          <span class="nav-icon">🔍</span>
+          <span>Intent Clusters</span>
+        </button>
+        <button class="nav-item" data-panel="templates" id="nav-templates">
+          <span class="nav-icon">📋</span>
+          <span>Workflow Templates</span>
+        </button>
       </div>
 
       <div class="nav-section">
@@ -128,6 +146,8 @@
       <div class="panel" id="panel-automations"></div>
       <div class="panel" id="panel-mcp"></div>
       <div class="panel" id="panel-fsm"></div>
+      <div class="panel" id="panel-clusters"></div>
+      <div class="panel" id="panel-templates"></div>
       <div class="panel" id="panel-insights"></div>
       <div class="panel" id="panel-health">
         <div id="health-panel"></div>

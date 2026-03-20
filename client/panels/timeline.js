@@ -9,10 +9,13 @@ export async function renderTimeline(container) {
   container.innerHTML = '<div class="panel-header"><h2>⌛ Loading timeline...</h2></div>';
 
   try {
-    const [intents, trajectories] = await Promise.all([
+    const [intents, trajectories, predictionsData] = await Promise.all([
       api.getIntents(),
-      api.getTrajectories()
+      api.getTrajectories(),
+      api.getTransitionPredictions({ minConfidence: 0.5 }).catch(() => ({ predictions: [] }))
     ]);
+
+    const predictions = predictionsData.predictions || [];
 
     // Build timeline events from stage histories
     const events = [];
@@ -75,16 +78,28 @@ export async function renderTimeline(container) {
 
       <!-- Intent Cards (summary) -->
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 32px;">
-        ${intents.map(i => `
-          <div class="card" style="padding: 14px; cursor: pointer;" onclick="document.getElementById('event-${i.id}')?.scrollIntoView({behavior: 'smooth', block: 'center'})">
+        ${intents.map(i => {
+          const prediction = predictions.find(p => p.intent_id === i.id);
+          return `
+          <div class="card" style="padding: 14px; cursor: pointer; ${prediction ? 'border: 2px solid var(--accent-success);' : ''}" onclick="document.getElementById('event-${i.id}')?.scrollIntoView({behavior: 'smooth', block: 'center'})">
             <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
               <span style="font-size: 13px; font-weight: 600;">${truncate(i.title, 28)}</span>
               <span class="badge badge-${i.stage}" style="font-size: 9px;">${i.stage}</span>
             </div>
+            ${prediction ? `
+              <div style="margin: 8px 0; padding: 8px; background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.2)); border-radius: 6px; border-left: 3px solid var(--accent-success);">
+                <div style="font-size: 11px; font-weight: 600; color: var(--accent-success); margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                  <span>🎯</span>
+                  <span>Ready for ${prediction.predicted_stage}</span>
+                  <span style="background: rgba(76, 175, 80, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 9px;">${Math.round(prediction.confidence * 100)}%</span>
+                </div>
+                <div style="font-size: 10px; color: var(--text-secondary); line-height: 1.4;">${truncate(prediction.reasoning, 80)}</div>
+              </div>
+            ` : ''}
             <div style="font-size: 11px; color: var(--text-muted);">${(i.stageHistory || []).length} stage changes</div>
             ${!i.active ? '<span style="font-size: 10px; color: var(--text-muted);">✓ completed</span>' : ''}
           </div>
-        `).join('')}
+        `}).join('')}
       </div>
 
       <!-- Timeline -->

@@ -1,11 +1,16 @@
 /**
  * Quick Add — Floating Natural Language Inbox
- * Allows users to capture thoughts instantly
+ * Allows users to capture thoughts instantly with text or voice input
  */
+
+import SpeechRecognitionManager from '../utils/speechRecognition.js';
 
 export class QuickAdd {
     constructor() {
         this.isOpen = false;
+        this.isRecording = false;
+        this.speechRecognition = new SpeechRecognitionManager();
+        this.setupSpeechRecognition();
         this.render();
         this.attachEvents();
     }
@@ -39,6 +44,12 @@ export class QuickAdd {
                 </div>
                 <div class="quick-add-footer">
                     <button class="btn btn-secondary" id="quick-add-cancel">Cancel</button>
+                    ${this.speechRecognition.isSupported() ? `
+                    <button class="btn btn-voice" id="quick-add-voice" title="Voice Input">
+                        <span class="btn-icon" id="voice-icon">🎤</span>
+                        <span id="voice-status">Voice</span>
+                    </button>
+                    ` : ''}
                     <button class="btn btn-primary" id="quick-add-submit">
                         <span class="btn-icon">✨</span> Add to Kernel
                     </button>
@@ -55,12 +66,17 @@ export class QuickAdd {
         const closeBtn = document.getElementById('quick-add-close');
         const cancelBtn = document.getElementById('quick-add-cancel');
         const submitBtn = document.getElementById('quick-add-submit');
+        const voiceBtn = document.getElementById('quick-add-voice');
         const input = document.getElementById('quick-add-input');
 
         fab.addEventListener('click', () => this.toggle());
         closeBtn.addEventListener('click', () => this.close());
         cancelBtn.addEventListener('click', () => this.close());
         submitBtn.addEventListener('click', () => this.submit());
+
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -108,6 +124,73 @@ export class QuickAdd {
         result.classList.remove('visible');
     }
 
+    setupSpeechRecognition() {
+        if (!this.speechRecognition.isSupported()) return;
+
+        this.speechRecognition.onStart = () => {
+            this.isRecording = true;
+            const voiceIcon = document.getElementById('voice-icon');
+            const voiceStatus = document.getElementById('voice-status');
+            if (voiceIcon) voiceIcon.textContent = '🔴';
+            if (voiceStatus) voiceStatus.textContent = 'Listening...';
+        };
+
+        this.speechRecognition.onResult = (transcript, isFinal) => {
+            const input = document.getElementById('quick-add-input');
+            if (input) {
+                if (isFinal) {
+                    // Final result - append to input
+                    input.value = transcript;
+                } else {
+                    // Interim result - show as placeholder
+                    input.placeholder = transcript;
+                }
+            }
+        };
+
+        this.speechRecognition.onEnd = () => {
+            this.isRecording = false;
+            const voiceIcon = document.getElementById('voice-icon');
+            const voiceStatus = document.getElementById('voice-status');
+            const input = document.getElementById('quick-add-input');
+            if (voiceIcon) voiceIcon.textContent = '🎤';
+            if (voiceStatus) voiceStatus.textContent = 'Voice';
+            if (input) input.placeholder = 'Type naturally...';
+        };
+
+        this.speechRecognition.onError = (error) => {
+            this.isRecording = false;
+            const voiceIcon = document.getElementById('voice-icon');
+            const voiceStatus = document.getElementById('voice-status');
+            const result = document.getElementById('quick-add-result');
+            if (voiceIcon) voiceIcon.textContent = '🎤';
+            if (voiceStatus) voiceStatus.textContent = 'Voice';
+            if (result) {
+                result.innerHTML = `
+                    <div class="result-error">
+                        <span class="result-icon">⚠️</span>
+                        <div class="result-text">
+                            <strong>Voice Input Error:</strong> ${error}
+                        </div>
+                    </div>
+                `;
+                result.classList.add('visible');
+            }
+        };
+    }
+
+    toggleVoiceInput() {
+        if (this.isRecording) {
+            this.speechRecognition.stop();
+        } else {
+            const input = document.getElementById('quick-add-input');
+            if (input) {
+                input.placeholder = 'Listening for your voice...';
+            }
+            this.speechRecognition.start();
+        }
+    }
+
     async submit() {
         const input = document.getElementById('quick-add-input');
         const source = document.getElementById('quick-add-source');
@@ -122,12 +205,17 @@ export class QuickAdd {
         submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Processing...';
 
         try {
+            // Check if this was voice input
+            const isVoiceInput = this.speechRecognition.getTranscript() === text;
+            const finalSource = isVoiceInput ? `${source.value}-voice` : source.value;
+
             const response = await fetch('http://localhost:3000/api/inbox', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     text: text,
-                    source: source.value
+                    source: finalSource,
+                    metadata: isVoiceInput ? { input_method: 'voice' } : { input_method: 'text' }
                 })
             });
 

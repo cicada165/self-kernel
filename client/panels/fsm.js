@@ -174,10 +174,23 @@ export async function renderFsm(container) {
 async function refreshIntentsDropdown() {
     const select = document.getElementById('fsm-intent-select');
     try {
-        const intents = await api.getIntents();
+        const [intents, predictionsData] = await Promise.all([
+            api.getIntents(),
+            api.getTransitionPredictions({ minConfidence: 0.5 }).catch(() => ({ predictions: [] }))
+        ]);
+
+        const predictions = predictionsData.predictions || [];
+        const predictionMap = new Map(predictions.map(p => [p.intent_id, p]));
+
         select.innerHTML = intents
             .filter(i => i.stage !== 'execution') // Only show ones not yet executing
-            .map(i => `<option value="${i.id}">[${i.stage}] ${i.title}</option>`)
+            .map(i => {
+                const prediction = predictionMap.get(i.id);
+                const predictionIndicator = prediction
+                    ? ` 🎯 → ${prediction.predicted_stage} (${Math.round(prediction.confidence * 100)}%)`
+                    : '';
+                return `<option value="${i.id}">[${i.stage}] ${i.title}${predictionIndicator}</option>`;
+            })
             .join('');
         if (select.options.length === 0) {
             select.innerHTML = '<option value="">No non-executing intents available</option>';

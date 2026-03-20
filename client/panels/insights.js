@@ -5,29 +5,31 @@
  * Shows what the system has learned and provides recommendations.
  */
 
-import { fetchAPI } from '../api.js';
+import { api } from '../api.js';
 
 let insightsData = null;
 
 /**
  * Render the insights panel
  */
-export async function render() {
-  const container = document.getElementById('insights-panel');
-  if (!container) return;
-
-  container.innerHTML = '<div class="loading">Analyzing patterns and generating insights...</div>';
+export async function renderInsights(container) {
+  container.innerHTML = '<div class="panel-header"><h2>⌛ Analyzing patterns and generating insights...</h2></div>';
 
   try {
     // Fetch all necessary data for insights
-    const [intents, ratPatterns, suggestions, governanceStats, meta, cognitiveStages] = await Promise.all([
-      fetchAPI('/intents'),
-      fetchAPI('/rat-patterns'),
-      fetchAPI('/suggestions'),
-      fetchAPI('/intent-proxy/governance/stats').catch(() => ({ totalExecutions: 0 })),
-      fetchAPI('/meta').catch(() => ({})),
-      fetchAPI('/cognitive-stages').catch(() => [])
+    const [intents, ratPatterns, governanceStats, cognitiveStages, learningHistory, acceptanceTrends, patternReuse, learningVelocity] = await Promise.all([
+      api.getIntents(),
+      api.getAll('rat-patterns').catch(() => []),
+      api.getGovernanceStats().catch(() => ({ totalExecutions: 0 })),
+      api.getCognitiveStages().catch(() => []),
+      api.getLearningHistory().catch(() => ({ evolution: [] })),
+      api.getAcceptanceTrends().catch(() => ({ trends: [] })),
+      api.getPatternReuse().catch(() => ({ top_patterns: [], distribution: {} })),
+      api.getLearningVelocity().catch(() => ({ velocity: [] }))
     ]);
+
+    const meta = {}; // TODO: Add meta API endpoint if needed
+    const suggestions = []; // TODO: Add suggestions list if needed
 
     insightsData = analyzeInsights({
       intents,
@@ -38,7 +40,12 @@ export async function render() {
       cognitiveStages
     });
 
-    container.innerHTML = renderInsightsDashboard(insightsData);
+    container.innerHTML = renderInsightsDashboard(insightsData, {
+      learningHistory: learningHistory.evolution || [],
+      acceptanceTrends: acceptanceTrends.trends || [],
+      patternReuse: patternReuse.top_patterns || [],
+      learningVelocity: learningVelocity.velocity || []
+    });
 
   } catch (error) {
     container.innerHTML = `
@@ -346,33 +353,38 @@ function calculateTrend(values) {
 /**
  * Render insights dashboard
  */
-function renderInsightsDashboard(insights) {
+function renderInsightsDashboard(insights, analytics) {
   return `
-    <div class="insights-dashboard">
-      <!-- Header -->
-      <div class="insights-header">
-        <h2>🔮 System Insights</h2>
-        <button onclick="location.reload()" class="btn-secondary">Refresh Insights</button>
-      </div>
-
-      <!-- Summary Cards -->
-      ${renderSummaryCards(insights.summary)}
-
-      <!-- Key Patterns -->
-      ${renderPatternsSection(insights.patterns)}
-
-      <!-- Trends -->
-      ${renderTrendsSection(insights.trends)}
-
-      <!-- Recommendations -->
-      ${renderRecommendationsSection(insights.recommendations)}
-
-      <!-- Learning Metrics -->
-      ${renderLearningMetrics(insights.learningMetrics)}
-
-      <!-- Cognitive State -->
-      ${insights.cognitiveInsights ? renderCognitiveInsights(insights.cognitiveInsights) : ''}
+    <div class="panel-header">
+      <h2>📊 Insights & Learning Analytics</h2>
+      <p>Visualize system learning, pattern trends, and behavior evolution over time.</p>
     </div>
+
+    <!-- Summary Cards -->
+    ${renderSummaryCards(insights.summary)}
+
+    <!-- 4 Interactive Charts -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; margin-bottom: 32px;">
+      ${renderParameterEvolutionChart(analytics.learningHistory)}
+      ${renderAcceptanceTrendsChart(analytics.acceptanceTrends)}
+      ${renderPatternReuseChart(analytics.patternReuse)}
+      ${renderLearningVelocityChart(analytics.learningVelocity)}
+    </div>
+
+    <!-- Key Patterns -->
+    ${renderPatternsSection(insights.patterns)}
+
+    <!-- Trends -->
+    ${renderTrendsSection(insights.trends)}
+
+    <!-- Recommendations -->
+    ${renderRecommendationsSection(insights.recommendations)}
+
+    <!-- Learning Metrics -->
+    ${renderLearningMetrics(insights.learningMetrics)}
+
+    <!-- Cognitive State -->
+    ${insights.cognitiveInsights ? renderCognitiveInsights(insights.cognitiveInsights) : ''}
   `;
 }
 
@@ -528,4 +540,166 @@ function renderCognitiveInsights(insights) {
   `;
 }
 
-export { render };
+/**
+ * Chart 1: Parameter Evolution Over Time
+ */
+function renderParameterEvolutionChart(evolution) {
+  if (!evolution || evolution.length === 0) {
+    return '<div class="card"><div class="card-header"><span class="card-title">📈 Parameter Evolution</span></div><p style="padding: 20px; color: var(--text-muted);">No data available yet.</p></div>';
+  }
+
+  const maxRate = Math.max(...evolution.map(e => e.acceptance_rate), 1);
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📈 Parameter Evolution</span>
+        <span style="font-size: 11px; color: var(--text-muted);">Learning thresholds over time</span>
+      </div>
+      <div style="padding: 20px;">
+        <div style="display: flex; flex-direction: column; gap: 4px; height: 200px; justify-content: space-between;">
+          ${evolution.map((week, idx) => `
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 10px; color: var(--text-muted); width: 50px;">${week.week}</span>
+              <div style="flex: 1; position: relative; background: var(--bg-secondary); border-radius: 4px; height: 20px; overflow: hidden;">
+                <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${(week.acceptance_rate * 100)}%; background: linear-gradient(90deg, var(--accent-success), var(--accent-primary)); border-radius: 4px; transition: width 0.3s;"></div>
+                <span style="position: absolute; top: 50%; left: 8px; transform: translateY(-50%); font-size: 10px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${Math.round(week.acceptance_rate * 100)}%</span>
+              </div>
+              <span style="font-size: 10px; color: var(--text-secondary); width: 40px;">${week.feedback_count} feedback</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle); display: flex; gap: 16px; font-size: 11px;">
+          <div><span style="color: var(--text-muted);">Exec Threshold:</span> <strong>${(evolution[evolution.length - 1]?.execution_threshold * 100 || 70).toFixed(0)}%</strong></div>
+          <div><span style="color: var(--text-muted);">Precision:</span> <strong>${(evolution[evolution.length - 1]?.precision_confidence * 100 || 80).toFixed(0)}%</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Chart 2: Acceptance Rate Trends
+ */
+function renderAcceptanceTrendsChart(trends) {
+  if (!trends || trends.length === 0) {
+    return '<div class="card"><div class="card-header"><span class="card-title">✅ Acceptance Trends</span></div><p style="padding: 20px; color: var(--text-muted);">No suggestions yet.</p></div>';
+  }
+
+  const maxTotal = Math.max(...trends.map(t => t.total), 1);
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">✅ Acceptance Trends</span>
+        <span style="font-size: 11px; color: var(--text-muted);">User feedback patterns</span>
+      </div>
+      <div style="padding: 20px;">
+        <div style="height: 200px; display: flex; align-items: flex-end; gap: 8px; padding-bottom: 20px; border-bottom: 2px solid var(--border-subtle); position: relative;">
+          ${trends.map((week, idx) => {
+            const acceptedHeight = (week.accepted / maxTotal) * 100;
+            const rejectedHeight = (week.rejected / maxTotal) * 100;
+            const pendingHeight = (week.pending / maxTotal) * 100;
+            return `
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; display: flex; flex-direction: column-reverse; gap: 1px; height: 160px; justify-content: flex-end;">
+                ${week.accepted > 0 ? `<div style="width: 100%; height: ${acceptedHeight}%; background: var(--accent-success); border-radius: 4px 4px 0 0;" title="${week.accepted} accepted"></div>` : ''}
+                ${week.rejected > 0 ? `<div style="width: 100%; height: ${rejectedHeight}%; background: var(--accent-danger);" title="${week.rejected} rejected"></div>` : ''}
+                ${week.pending > 0 ? `<div style="width: 100%; height: ${pendingHeight}%; background: var(--accent-warning); border-radius: ${week.accepted === 0 && week.rejected === 0 ? '4px 4px 0 0' : '0'}" title="${week.pending} pending"></div>` : ''}
+              </div>
+              <span style="font-size: 9px; color: var(--text-muted); writing-mode: vertical-lr; transform: rotate(180deg);">${week.week}</span>
+            </div>
+          `}).join('')}
+        </div>
+        <div style="margin-top: 12px; display: flex; gap: 16px; justify-content: center; font-size: 11px;">
+          <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: var(--accent-success); border-radius: 2px;"></span> Accepted</div>
+          <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: var(--accent-danger); border-radius: 2px;"></span> Rejected</div>
+          <div style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: var(--accent-warning); border-radius: 2px;"></span> Pending</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Chart 3: Pattern Reuse Frequency
+ */
+function renderPatternReuseChart(patterns) {
+  if (!patterns || patterns.length === 0) {
+    return '<div class="card"><div class="card-header"><span class="card-title">🔄 Pattern Reuse</span></div><p style="padding: 20px; color: var(--text-muted);">No patterns learned yet.</p></div>';
+  }
+
+  const topPatterns = patterns.slice(0, 8);
+  const maxReuse = Math.max(...topPatterns.map(p => p.reuse_count), 1);
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🔄 Pattern Reuse Frequency</span>
+        <span style="font-size: 11px; color: var(--text-muted);">Top 8 patterns by usage</span>
+      </div>
+      <div style="padding: 20px;">
+        <div style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto;">
+          ${topPatterns.map((pattern, idx) => {
+            const barWidth = (pattern.reuse_count / maxReuse) * 100;
+            const color = pattern.reuse_count > 10 ? 'var(--accent-success)' : pattern.reuse_count > 5 ? 'var(--accent-primary)' : 'var(--accent-info)';
+            return `
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 10px; color: var(--text-muted); width: 20px;">#${idx + 1}</span>
+              <div style="flex: 1;">
+                <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${pattern.name}</div>
+                <div style="position: relative; background: var(--bg-secondary); border-radius: 4px; height: 16px; overflow: hidden;">
+                  <div style="position: absolute; top: 0; left: 0; height: 100%; width: ${barWidth}%; background: ${color}; border-radius: 4px; transition: width 0.3s;"></div>
+                  <span style="position: absolute; top: 50%; left: 6px; transform: translateY(-50%); font-size: 9px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">${pattern.reuse_count}× (${Math.round(pattern.confidence * 100)}%)</span>
+                </div>
+              </div>
+            </div>
+          `}).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Chart 4: Learning Velocity
+ */
+function renderLearningVelocityChart(velocity) {
+  if (!velocity || velocity.length === 0) {
+    return '<div class="card"><div class="card-header"><span class="card-title">⚡ Learning Velocity</span></div><p style="padding: 20px; color: var(--text-muted);">No activity data yet.</p></div>';
+  }
+
+  const maxVelocity = Math.max(...velocity.map(v => v.learning_rate), 1);
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">⚡ Learning Velocity</span>
+        <span style="font-size: 11px; color: var(--text-muted);">System activity over time</span>
+      </div>
+      <div style="padding: 20px;">
+        <div style="height: 180px; display: flex; align-items: flex-end; gap: 6px; padding-bottom: 20px; border-bottom: 2px solid var(--border-subtle);">
+          ${velocity.map((week, idx) => {
+            const height = (week.learning_rate / maxVelocity) * 100;
+            return `
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative;" title="Week ${idx + 1}: ${week.patterns_learned} patterns, ${week.payloads_generated} payloads, ${week.intents_created} intents">
+              <div style="width: 100%; height: 140px; display: flex; align-items: flex-end;">
+                <div style="width: 100%; height: ${height}%; background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary)); border-radius: 4px 4px 0 0; position: relative; overflow: hidden;">
+                  <span style="position: absolute; top: 4px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 700; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">${week.learning_rate}</span>
+                </div>
+              </div>
+              <span style="font-size: 9px; color: var(--text-muted);">W${idx + 1}</span>
+            </div>
+          `}).join('')}
+        </div>
+        <div style="margin-top: 12px; display: flex; gap: 16px; justify-content: center; font-size: 11px;">
+          <div><span style="color: var(--text-muted);">Avg:</span> <strong>${Math.round(velocity.reduce((sum, v) => sum + v.learning_rate, 0) / velocity.length)}/week</strong></div>
+          <div><span style="color: var(--text-muted);">Peak:</span> <strong>${maxVelocity}</strong></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Keep old export for compatibility, but export both
+export { renderInsights, renderInsights as render };

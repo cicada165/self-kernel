@@ -104,5 +104,35 @@ export const api = {
         return request(`/search/collection/${collection}?${params}`);
     },
     getFilterOptions: (collection) => request(`/search/filter-options/${collection}`),
-    advancedSearch: (query, options) => request('/search/advanced', { method: 'POST', body: { query, options } })
+    advancedSearch: (query, options) => request('/search/advanced', { method: 'POST', body: { query, options } }),
+
+    // Anomaly Detection
+    getAnomalyBaseline: () => request('/anomaly/baseline'),
+    getAnomalyStatus: () => request('/anomaly/status'),
+    getRecentAnomalies: (limit = 10) => request(`/anomaly/recent?limit=${limit}`),
+
+    // Stage Predictor
+    getTransitionPredictions: (options = {}) => {
+        const params = new URLSearchParams(options);
+        return request(`/predictor/transitions?${params}`);
+    },
+    getIntentPrediction: (intentId, minConfidence = 0.3) => request(`/predictor/transitions/${intentId}?minConfidence=${minConfidence}`),
+    submitPredictionFeedback: (predictionId, intentId, predictedStage, accepted) =>
+        request('/predictor/feedback', {
+            method: 'POST',
+            body: { predictionId, intentId, predictedStage, accepted }
+        }),
+    getPredictorStatistics: () => request('/predictor/statistics'),
+
+    // Intent Clustering
+    findDuplicates: (minSimilarity = 0.7) => request(`/clustering/duplicates?minSimilarity=${minSimilarity}`),
+    clusterIntents: (k = 5) => request(`/clustering/clusters?k=${k}`),
+    getConsolidationRecommendations: () => request('/clustering/recommendations'),
+    getClusteringStatistics: () => request('/clustering/statistics'),
+
+    // Learning Analytics
+    getLearningHistory: () => request('/analytics/learning-history'),
+    getAcceptanceTrends: () => request('/analytics/acceptance-trends'),
+    getPatternReuse: () => request('/analytics/pattern-reuse'),
+    getLearningVelocity: () => request('/analytics/learning-velocity')
 };

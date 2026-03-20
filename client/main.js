@@ -18,9 +18,15 @@ import { renderStrategies } from './panels/strategies.js';
 import { renderHealthPanel } from './panels/health.js';
 import { renderTrajectoryBuilder } from './panels/trajectoryBuilder.js';
 import { renderSearch } from './panels/search.js';
+import { renderInsights } from './panels/insights.js';
+import { renderClusters } from './panels/clusters.js';
+import { renderTemplates } from './panels/templates.js';
 import { OnboardingOverlay } from './components/onboarding.js';
 import { QuickAdd } from './components/quick-add.js';
 import { LearningFeed } from './components/learning-feed.js';
+import { CommandPalette } from './components/command-palette.js';
+import { themeManager } from './utils/themeManager.js';
+import { ShareViewer } from './components/share-viewer.js';
 
 const panelRenderers = {
     overview: renderOverview,
@@ -38,6 +44,9 @@ const panelRenderers = {
     health: renderHealthPanel,
     trajectoryBuilder: renderTrajectoryBuilder,
     search: renderSearch,
+    insights: renderInsights,
+    clusters: renderClusters,
+    templates: renderTemplates,
 };
 
 let currentPanel = 'overview';
@@ -67,6 +76,12 @@ function switchPanel(panelName) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if we're viewing a shared resource
+    if (window.location.pathname.startsWith('/share/')) {
+        new ShareViewer();
+        return; // Don't initialize the main app
+    }
+
     // Set up navigation clicks
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
@@ -110,6 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const learningFeed = new LearningFeed();
     window.learningFeedInstance = learningFeed; // Make globally accessible
 
+    // Initialize command palette
+    new CommandPalette();
+
+    // Initialize mobile menu
+    initMobileMenu();
+
+    // Initialize theme manager
+    themeManager.init();
+    initThemeToggle();
+
     // Add sample learning event after 3 seconds (demo)
     setTimeout(() => {
         learningFeed.addEvent({
@@ -135,5 +160,71 @@ async function checkServer() {
         }
     } catch {
         indicator.innerHTML = '<span class="status-dot" style="background: var(--accent-danger);"></span><span>Kernel Offline</span>';
+    }
+}
+
+function initMobileMenu() {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('mobile-menu-toggle');
+    const overlay = document.getElementById('mobile-overlay');
+
+    if (!sidebar || !toggle || !overlay) return;
+
+    // Toggle menu
+    const toggleMenu = () => {
+        sidebar.classList.toggle('mobile-open');
+        toggle.classList.toggle('active');
+        overlay.classList.toggle('active');
+    };
+
+    // Close menu
+    const closeMenu = () => {
+        sidebar.classList.remove('mobile-open');
+        toggle.classList.remove('active');
+        overlay.classList.remove('active');
+    };
+
+    // Event listeners
+    toggle.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    // Close menu when navigating to a panel
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', closeMenu);
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
+            closeMenu();
+        }
+    });
+}
+
+function initThemeToggle() {
+    // Add theme toggle button to sidebar footer
+    const sidebarFooter = document.querySelector('.sidebar-footer');
+    if (!sidebarFooter) return;
+
+    const themeToggle = document.createElement('button');
+    themeToggle.className = 'theme-toggle';
+    themeToggle.innerHTML = `
+        <span class="theme-icon">${themeManager.isDark() ? '☀️' : '🌙'}</span>
+        <span class="theme-label">${themeManager.isDark() ? 'Light Mode' : 'Dark Mode'}</span>
+    `;
+    themeToggle.title = 'Toggle theme';
+
+    themeToggle.addEventListener('click', () => {
+        themeManager.toggle();
+        themeToggle.querySelector('.theme-icon').textContent = themeManager.isDark() ? '☀️' : '🌙';
+        themeToggle.querySelector('.theme-label').textContent = themeManager.isDark() ? 'Light Mode' : 'Dark Mode';
+    });
+
+    // Insert before kernel status
+    const kernelStatus = document.querySelector('.kernel-status');
+    if (kernelStatus) {
+        sidebarFooter.insertBefore(themeToggle, kernelStatus);
+    } else {
+        sidebarFooter.appendChild(themeToggle);
     }
 }

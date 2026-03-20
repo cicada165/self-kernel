@@ -57,6 +57,10 @@ export async function renderTrajectoryBuilder(container) {
                         💾 Save
                     </button>
 
+                    <button class="btn-secondary" onclick="window.trajectoryBuilder.exportCalendar()">
+                        📅 Export to Calendar
+                    </button>
+
                     <button class="btn-danger" onclick="window.trajectoryBuilder.delete()">
                         🗑️ Delete
                     </button>
@@ -498,5 +502,37 @@ window.trajectoryBuilder = window.trajectoryBuilder || {};
 window.trajectoryBuilder.updateTrajectoryProperty = function(property, value) {
     if (currentTrajectory) {
         currentTrajectory[property] = value;
+    }
+};
+
+// Export trajectory to calendar
+window.trajectoryBuilder.exportCalendar = async function() {
+    if (!currentTrajectory) {
+        alert('No trajectory selected');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/api/calendar/trajectory/${currentTrajectory.id}`);
+
+        if (!response.ok) {
+            throw new Error('Failed to export calendar');
+        }
+
+        // Create a download link
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${currentTrajectory.label || 'trajectory'}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        alert('📅 Calendar exported successfully! You can now import it into your calendar app.');
+    } catch (error) {
+        console.error('Calendar export error:', error);
+        alert('Failed to export calendar: ' + error.message);
     }
 };

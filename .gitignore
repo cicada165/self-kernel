@@ -4,3 +4,6 @@ data/
 .env
 .DS_Store
 *.log
+.env.local
+.venv
+__pycache__

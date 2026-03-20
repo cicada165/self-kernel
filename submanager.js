@@ -8,6 +8,8 @@ const __dirname = path.dirname(__filename);
 const REPO_ROOT = '/Users/qu4ntum/Documents/Dev/GitHub/self-kernel';
 const LOG_FILE = path.join(REPO_ROOT, 'iteration_log.md');
 const REPORT_FILE = path.join(REPO_ROOT, 'submanager_report.md');
+const OMNI_RESEARCHER_DIR = '/Users/qu4ntum/Documents/Dev/GitHub/omni-researcher';
+const OMNI_VENV_PYTHON = '/tmp/omni-test-env/bin/python';
 
 // Telemetry state
 let lastCommitHash = '';
@@ -94,6 +96,40 @@ Once completed, mark them as '✅' in the iteration_log.md Next Steps section, a
     });
 }
 
+function runResearchPhase(latestLog) {
+    return new Promise((resolve) => {
+        console.log(`[Submanager] 📖 Initiating Autonomous Research Phase...`);
+
+        // Dynamic query using the last state
+        const safeLog = latestLog.replace(/"/g, "'").substring(0, 500);
+        const query = `Based on this recent project state, what are 3 cutting-edge architectural patterns, libraries, or best practices we should implement next to evolve the system? State context: ${safeLog}`;
+
+        const cmd = `PYTHONPATH=${OMNI_RESEARCHER_DIR} ${OMNI_VENV_PYTHON} -m omni_researcher.main "${query}" --iterations 1 --output-json`;
+
+        exec(cmd, { cwd: OMNI_RESEARCHER_DIR, maxBuffer: 1024 * 1024 * 5 }, (error, stdout, stderr) => {
+            if (error) {
+                console.error("[Submanager] Research phase failed. Proceeding without research.", error.message);
+                return resolve("No research available (failed).");
+            }
+
+            try {
+                // omni-researcher outputs JSON block at the end
+                const jsonMatch = stdout.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    const result = JSON.parse(jsonMatch[0]);
+                    const summary = result.research_payload || "Research completed but payload was empty.";
+                    console.log(`[Submanager] 📖 Research Phase Complete.`);
+                    resolve(summary);
+                } else {
+                    resolve("Research completed but no JSON was returned.");
+                }
+            } catch (e) {
+                resolve("Research completed but failed to parse results.");
+            }
+        });
+    });
+}
+
 async function runCycle() {
     await checkActiveAgents();
     await checkGit();
@@ -128,14 +164,25 @@ ${latestLog}
             spawnNextCycle(pendingTasks);
         } else {
             console.log(`[Submanager] TASK VACUUM DETECTED. No pending tasks in iteration_log.md.`);
+
+            // Hook 1: Await research before dreaming (TEMPORARILY DISABLED - research backend offline)
+            // const researchFindings = await runResearchPhase(latestLog);
+            const researchFindings = "Research temporarily disabled - omni-llm proxy not running.";
+
             console.log(`[Submanager] Spawning 'Lead Architect' to dream up the next iteration cycle...`);
 
             const agentId = `planner_${Date.now()}`;
-            const plannerPrompt = `CRITICAL ASSIGNMENT: You are the Lead Architect for this autonomous swarm. 
+
+            // Hook 2: Inject research context into prompt
+            const plannerPrompt = `CRITICAL ASSIGNMENT: You are the Lead Architect for this autonomous swarm.
 The current iteration batch is complete. Your mission is to:
 1. Analyze the current codebase and the latest entries in iteration_log.md.
-2. Identify the logical next steps, architectural improvements, or missing features aligned with the project ideology.
-3. Update the '## Next Steps' section in iteration_log.md with a fresh list of 5-10 '⏳' pending tasks.
+2. Review the latest autonomous research findings below to inspire your design:
+--- LATEST RESEARCH (omni-researcher) ---
+${researchFindings}
+-----------------------------------------
+3. Identify the logical next steps, architectural improvements, or missing features aligned with the project ideology and the new research.
+4. Update the '## Next Steps' section in iteration_log.md with a fresh list of 5-10 '⏳' pending tasks.
 
 Once you have updated the log, exit. This will trigger the Submanager to spawn the next worker army.`;
 

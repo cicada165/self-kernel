@@ -8,15 +8,19 @@ export async function renderOverview(container) {
   container.innerHTML = '<div class="panel-header"><h2>⌛ Loading kernel...</h2></div>';
 
   try {
-    const [status, activity, intents, persons, chains, trajectories, cognitiveStages] = await Promise.all([
+    const [status, activity, intents, persons, chains, trajectories, cognitiveStages, anomalyStatus, clusterStats] = await Promise.all([
       api.getStatus(),
       api.getActivity(),
       api.getIntents(),
       api.getPersons(),
       api.getChains(),
       api.getTrajectories(),
-      api.getCognitiveStages()
+      api.getCognitiveStages(),
+      api.getAnomalyStatus(),
+      api.getClusteringStatistics().catch(() => ({ statistics: { total_intents: 0, duplicates_found: 0, similar_pairs: 0 } }))
     ]);
+
+    const clusterData = clusterStats.statistics || { total_intents: 0, duplicates_found: 0, similar_pairs: 0 };
 
     const activeIntents = intents.filter(i => i.active);
     const trajectory = trajectories[0]; // Main trajectory
@@ -80,6 +84,50 @@ export async function renderOverview(container) {
           ${renderCognitiveStagesTimeline(cognitiveStages)}
         </div>
       </div>
+
+      <!-- Anomaly Detection -->
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+          <span class="card-title">🔍 Behavioral Anomaly Detection</span>
+        </div>
+        ${renderAnomalyStatus(anomalyStatus)}
+      </div>
+
+      <!-- Intent Clustering Summary -->
+      ${clusterData.duplicates_found > 0 || clusterData.similar_pairs > 0 ? `
+      <div class="card" style="margin-top: 20px; border-left: 4px solid var(--accent-warning);">
+        <div class="card-header">
+          <span class="card-title">🔍 Intent Clustering Analysis</span>
+          <button class="btn btn-sm" onclick="window.location.hash='#clusters'" style="background: var(--accent-primary); color: white; border: none; padding: 4px 12px; border-radius: 6px; cursor: pointer;">
+            View Details →
+          </button>
+        </div>
+        <div style="padding: 16px; display: flex; gap: 24px; align-items: center;">
+          <div>
+            <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+              Found ${clusterData.duplicates_found + clusterData.similar_pairs} potential consolidation opportunities
+            </div>
+            <div style="display: flex; gap: 16px;">
+              ${clusterData.duplicates_found > 0 ? `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 24px; font-weight: 800; color: var(--accent-danger);">${clusterData.duplicates_found}</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">duplicates</span>
+                </div>
+              ` : ''}
+              ${clusterData.similar_pairs > 0 ? `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 24px; font-weight: 800; color: var(--accent-warning);">${clusterData.similar_pairs}</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">similar pairs</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+          <div style="flex: 1; text-align: right; color: var(--text-secondary); font-size: 12px;">
+            💡 Consolidating similar intents can reduce cognitive load and improve focus.
+          </div>
+        </div>
+      </div>
+      ` : ''}
 
       <div class="two-col" style="margin-top: 20px;">
         <!-- Active Intents -->
@@ -266,4 +314,73 @@ function formatTime(ts) {
   if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
   if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function renderAnomalyStatus(anomalyStatus) {
+  if (!anomalyStatus) {
+    return '<p style="color: var(--text-muted); padding: 16px;">Anomaly detection unavailable.</p>';
+  }
+
+  const statusColor = anomalyStatus.status === 'active' ? 'var(--accent-success)'
+    : anomalyStatus.status === 'collecting' ? 'var(--accent-warning)'
+    : 'var(--text-muted)';
+
+  const statusIcon = anomalyStatus.status === 'active' ? '✓'
+    : anomalyStatus.status === 'collecting' ? '◉'
+    : '○';
+
+  return `
+    <div style="padding: 16px;">
+      <!-- Status Header -->
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <div style="width: 12px; height: 12px; border-radius: 50%; background: ${statusColor};"></div>
+        <span style="font-size: 13px; font-weight: 600; color: ${statusColor}; text-transform: capitalize;">
+          ${statusIcon} ${anomalyStatus.status}
+        </span>
+        <span style="font-size: 12px; color: var(--text-muted); margin-left: auto;">
+          ${anomalyStatus.samplesCollected}/${anomalyStatus.samplesNeeded} samples
+        </span>
+      </div>
+
+      <!-- Description -->
+      <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+        ${anomalyStatus.status === 'active'
+          ? 'System is monitoring your behavioral patterns using Z-score analysis. Unusual inputs trigger deeper processing.'
+          : `Collecting baseline data (${anomalyStatus.samplesCollected}/${anomalyStatus.samplesNeeded}). Once ${anomalyStatus.samplesNeeded} samples are gathered, anomaly detection will activate.`
+        }
+      </p>
+
+      ${anomalyStatus.status === 'active' ? `
+        <!-- Baseline Metrics -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">AVG INPUT LENGTH</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary);">
+              ${Math.round(anomalyStatus.metrics.length.mean)} chars
+            </div>
+            <div style="font-size: 9px; color: var(--text-muted); margin-top: 2px;">
+              σ = ${anomalyStatus.metrics.length.stdDev.toFixed(1)}
+            </div>
+          </div>
+
+          <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">AVG TIME OF DAY</div>
+            <div style="font-size: 16px; font-weight: 600; color: var(--text-primary);">
+              ${Math.round(anomalyStatus.metrics.hour.mean)}:00
+            </div>
+            <div style="font-size: 9px; color: var(--text-muted); margin-top: 2px;">
+              σ = ${anomalyStatus.metrics.hour.stdDev.toFixed(1)}h
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div style="margin-top: 12px; padding: 10px; background: rgba(74, 158, 255, 0.1); border-left: 3px solid var(--accent-primary); border-radius: 6px;">
+          <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
+            <strong>How it works:</strong> The system uses Welford's algorithm to track running variance of your input length and time-of-day patterns. Z-scores &gt;2.0 indicate novel behavior, triggering enhanced LLM processing.
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
 }

@@ -28,6 +28,14 @@ import governanceRouter from './routes/governance.js';
 import exportImportRouter from './routes/exportImport.js';
 import validationRouter from './routes/validation.js';
 import searchRouter from './routes/search.js';
+import anomalyRouter from './routes/anomaly.js';
+import stagePredictorRouter from './routes/stagePredictor.js';
+import clusteringRouter from './routes/clustering.js';
+import analyticsRouter from './routes/analytics.js';
+import templatesRouter from './routes/templates.js';
+import calendarRouter from './routes/calendar.js';
+import sharingRouter from './routes/sharing.js';
+import pluginsRouter, { initPlugins } from './routes/plugins.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -67,6 +75,14 @@ app.use('/api/export', exportImportRouter);
 app.use('/api/governance', governanceRouter);
 app.use('/api/validation', validationRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/anomaly', anomalyRouter);
+app.use('/api/predictor', stagePredictorRouter);
+app.use('/api/clustering', clusteringRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/templates', templatesRouter);
+app.use('/api/calendar', calendarRouter);
+app.use('/api/sharing', sharingRouter);
+app.use('/api/plugins', pluginsRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -137,6 +153,9 @@ async function start() {
     // Initialize strategy governance with defaults
     const { initStrategies } = await import('./services/strategyGovernance.js');
     await initStrategies();
+
+    // Initialize plugin system
+    await initPlugins();
 
     // Create HTTP server
     const server = http.createServer(app);
